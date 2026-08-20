@@ -2,7 +2,7 @@
 
 Interactive study hub for the **Saviynt Certified IGA Professional** exam.
 
-**Live site:** https://YOUR-USERNAME.github.io/scip-study-hub/
+**Live site:** https://mkheira1923.github.io/scip-study-hub/
 
 ## What's in it
 
