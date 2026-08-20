@@ -1,0 +1,815 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<meta name="description" content="Interactive study hub for the Saviynt Certified IGA Professional (SCIP) exam, SAVIGA-C01."/>
+<title>SCIP Study Hub &mdash; SAVIGA-C01</title>
+<style>
+:root{
+  --bg:#0b1220; --bg2:#0e1728; --panel:#111c30; --panel2:#16233a; --line:#25354f;
+  --text:#e9f1fb; --muted:#93a6c0; --dim:#6f83a0;
+  --a1:#5eead4; --a2:#34d399; --blue:#60a5fa; --purple:#a78bfa; --amber:#fbbf24; --rose:#fb7185;
+  --ok:#34d399; --bad:#fb7185; --warn:#fbbf24;
+  --shadow:0 10px 30px rgba(0,0,0,.35);
+  --r:14px;
+}
+html[data-theme="light"]{
+  --bg:#f6f8fc; --bg2:#eef2f9; --panel:#ffffff; --panel2:#f2f6fc; --line:#d8e1ee;
+  --text:#0f1c30; --muted:#4e6280; --dim:#6b7f9c;
+  --a1:#0d9488; --a2:#059669; --blue:#2563eb; --purple:#7c3aed; --amber:#b45309; --rose:#be123c;
+  --ok:#059669; --bad:#be123c; --warn:#b45309;
+  --shadow:0 6px 20px rgba(15,28,48,.08);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Inter,Helvetica,Arial,sans-serif;
+  background:var(--bg); color:var(--text); min-height:100vh; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--a1)}
+.wrap{max-width:1140px;margin:0 auto;padding:0 18px 96px}
+
+/* top bar */
+.top{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 92%,transparent);
+     backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top-in{max-width:1140px;margin:0 auto;padding:10px 18px;display:flex;align-items:center;gap:14px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.02em;white-space:nowrap}
+.dot{width:11px;height:11px;border-radius:50%;background:linear-gradient(135deg,var(--a1),var(--blue));flex:none}
+.chip{font-size:11px;padding:3px 8px;border-radius:999px;border:1px solid var(--line);color:var(--muted);background:var(--panel2);white-space:nowrap}
+nav.tabs{display:flex;gap:4px;overflow-x:auto;flex:1;scrollbar-width:none;padding:2px 0}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs button{background:none;border:1px solid transparent;color:var(--muted);padding:7px 11px;border-radius:10px;cursor:pointer;white-space:nowrap;font-size:14px}
+nav.tabs button:hover{color:var(--text);background:var(--panel2)}
+nav.tabs button[aria-current="page"]{color:var(--text);background:var(--panel2);border-color:var(--line);font-weight:650}
+.iconbtn{background:var(--panel2);border:1px solid var(--line);color:var(--muted);width:34px;height:34px;border-radius:10px;cursor:pointer;flex:none;display:grid;place-items:center;font-size:15px}
+.iconbtn:hover{color:var(--text)}
+
+/* generic */
+h1{font-size:clamp(26px,4.6vw,40px);line-height:1.12;letter-spacing:-.03em;margin:0 0 10px}
+h2{font-size:22px;letter-spacing:-.02em;margin:0 0 12px}
+h3{font-size:16px;margin:0 0 8px}
+p{margin:0 0 12px}
+.muted{color:var(--muted)}
+.dim{color:var(--dim);font-size:13px}
+.kicker{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--a1);font-weight:700;margin-bottom:6px}
+.page{display:none;padding-top:26px}
+.page.on{display:block;animation:fade .22s ease}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow)}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+@media(max-width:880px){.g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.g2,.g3,.g4{grid-template-columns:1fr}}
+.btn{border:0;border-radius:11px;padding:10px 15px;font-weight:650;cursor:pointer;background:var(--a1);color:#04241f;font-size:14px}
+html[data-theme="light"] .btn{color:#fff}
+.btn:hover{filter:brightness(1.07)}
+.btn.sec{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
+.btn.gho{background:transparent;color:var(--muted);border:1px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:not-allowed;filter:none}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+select,input[type=text]{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:9px 11px}
+.bar{height:7px;border-radius:999px;background:var(--panel2);overflow:hidden;border:1px solid var(--line)}
+.bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--a2),var(--a1));width:0;transition:width .4s}
+.stat{font-size:30px;font-weight:800;letter-spacing:-.02em;line-height:1.1}
+.note{border:1px solid var(--line);border-left:3px solid var(--amber);background:color-mix(in srgb,var(--amber) 9%,var(--panel));
+      padding:13px 15px;border-radius:10px;margin:14px 0;font-size:14px}
+.note.good{border-left-color:var(--ok);background:color-mix(in srgb,var(--ok) 9%,var(--panel))}
+.note.bad{border-left-color:var(--bad);background:color-mix(in srgb,var(--bad) 9%,var(--panel))}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:650;font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+tbody tr:hover{background:var(--panel2)}
+.tag{display:inline-block;font-size:11px;padding:2px 7px;border-radius:6px;border:1px solid var(--line);background:var(--panel2);color:var(--muted)}
+.tag.s1{color:var(--blue)}.tag.s2{color:var(--a1)}.tag.s3{color:var(--purple)}
+.tag.s4{color:var(--amber)}.tag.s5{color:var(--rose)}.tag.s6{color:var(--a2)}
+.scroll{overflow-x:auto}
+
+/* section tiles */
+.tile{cursor:pointer;transition:transform .15s,border-color .15s}
+.tile:hover{transform:translateY(-2px);border-color:var(--a1)}
+
+/* flashcard */
+.fc-stage{perspective:1400px;margin:16px 0}
+.fc{position:relative;width:100%;min-height:320px;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,.2,.2,1);cursor:pointer}
+.fc.flip{transform:rotateY(180deg)}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  border:1px solid var(--line);border-radius:18px;padding:30px;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;text-align:center;background:var(--panel);box-shadow:var(--shadow)}
+.fc-face.back{transform:rotateY(180deg);background:linear-gradient(160deg,color-mix(in srgb,var(--a1) 10%,var(--panel)),var(--panel))}
+.fc-face .big{font-size:clamp(19px,3vw,27px);font-weight:750;letter-spacing:-.02em}
+.fc-face .ans{font-size:clamp(15px,2vw,18px);line-height:1.6}
+.fc-hint{position:absolute;bottom:14px;left:0;right:0;font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.09em}
+
+/* quiz */
+.opt{display:flex;gap:11px;align-items:flex-start;width:100%;text-align:left;padding:13px 15px;border-radius:11px;
+  border:1px solid var(--line);background:var(--panel2);cursor:pointer;margin-bottom:9px;transition:.12s}
+.opt:hover:not(:disabled){border-color:var(--a1)}
+.opt .mk{flex:none;width:24px;height:24px;border-radius:7px;border:1px solid var(--line);display:grid;place-items:center;font-size:12px;font-weight:700;color:var(--muted);background:var(--panel)}
+.opt.sel{border-color:var(--blue)}
+.opt.sel .mk{background:var(--blue);color:#fff;border-color:var(--blue)}
+.opt.ok{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 12%,var(--panel2))}
+.opt.ok .mk{background:var(--ok);color:#04241f;border-color:var(--ok)}
+.opt.no{border-color:var(--bad);background:color-mix(in srgb,var(--bad) 12%,var(--panel2))}
+.opt.no .mk{background:var(--bad);color:#fff;border-color:var(--bad)}
+.opt:disabled{cursor:default}
+.expl{border:1px solid var(--line);border-left:3px solid var(--a1);background:var(--panel2);padding:13px 15px;border-radius:10px;font-size:14px;margin-top:6px}
+.qmeta{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+
+/* exam */
+.timer{font-variant-numeric:tabular-nums;font-weight:750;font-size:15px}
+.timer.low{color:var(--rose)}
+.pal{display:grid;grid-template-columns:repeat(auto-fill,minmax(34px,1fr));gap:6px}
+.pal button{aspect-ratio:1;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--muted);cursor:pointer;font-size:12px;padding:0}
+.pal button.ans{background:color-mix(in srgb,var(--a1) 22%,var(--panel2));color:var(--text);border-color:var(--a1)}
+.pal button.flag{border-color:var(--amber);color:var(--amber)}
+.pal button.cur{outline:2px solid var(--blue);outline-offset:1px}
+.score-ring{--p:0;width:150px;height:150px;border-radius:50%;display:grid;place-items:center;flex:none;
+  background:conic-gradient(var(--ringc,var(--a1)) calc(var(--p)*1%),var(--panel2) 0)}
+.score-ring>div{width:120px;height:120px;border-radius:50%;background:var(--panel);display:grid;place-items:center;text-align:center}
+details{border:1px solid var(--line);border-radius:11px;padding:12px 15px;background:var(--panel2);margin-bottom:9px}
+details[open]{background:var(--panel)}
+summary{cursor:pointer;font-weight:650;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"+";display:inline-block;width:18px;color:var(--a1);font-weight:800}
+details[open] summary::before{content:"\2212"}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+ul.clean{margin:0;padding-left:19px}
+ul.clean li{margin-bottom:7px}
+kbd{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;background:var(--panel2);border:1px solid var(--line);border-radius:5px;padding:1px 6px}
+@media print{.top,nav.tabs,.noprint{display:none!important}.page{display:block!important}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><span class="dot"></span>SCIP Study Hub</div>
+    <span class="chip">SAVIGA-C01</span>
+    <nav class="tabs" id="tabs" aria-label="Sections"></nav>
+    <button class="iconbtn" id="themeBtn" title="Toggle light / dark" aria-label="Toggle theme">&#9681;</button>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- DASHBOARD -->
+<section class="page on" id="p-home">
+  <div style="padding:26px 0 8px">
+    <div class="kicker">Saviynt Certified IGA Professional</div>
+    <h1>Everything you need for SAVIGA-C01, in one place.</h1>
+    <p class="muted" style="max-width:64ch;font-size:16px">
+      70 questions. 2 hours. Scored 50&ndash;500, pass at 350. Six weighted domains.
+      This hub is built from the official Exam Preparation Guide, the L100 assessment, the official practice exam,
+      and the EIC Administration Guide &mdash; with a SailPoint translation layer throughout.
+    </p>
+    <div class="row" style="margin-top:16px">
+      <button class="btn" data-go="exam">Start a full mock exam</button>
+      <button class="btn sec" data-go="practice">Practice by domain</button>
+      <button class="btn gho" data-go="cards">Flashcards</button>
+    </div>
+  </div>
+
+  <div class="note bad" id="correction">
+    <strong>Blueprint correction.</strong> An earlier build of this study app used a nine-section &ldquo;2026 blueprint&rdquo;
+    and claimed the official per-section counts summed to 83 against a stated total of 70.
+    That is wrong on both points. The published Saviynt guide lists <strong>six</strong> sections
+    weighted 15 / 15 / 10 / 10 / 15 / 5, which sums to <strong>exactly 70</strong>.
+    This hub uses the real blueprint, and the mock exam draws to that exact weighting.
+    <button class="btn gho" style="margin-left:8px;padding:5px 10px;font-size:13px" data-go="blueprint">See the blueprint</button>
+  </div>
+
+  <div class="grid g4" style="margin:16px 0">
+    <div class="card"><div class="dim">Questions answered</div><div class="stat" id="s-ans">0</div><div class="dim" id="s-ansb">of 177 in the bank</div></div>
+    <div class="card"><div class="dim">Overall accuracy</div><div class="stat" id="s-acc">&mdash;</div><div class="dim">across all practice</div></div>
+    <div class="card"><div class="dim">Cards marked known</div><div class="stat" id="s-known">0</div><div class="dim">of 150 flashcards</div></div>
+    <div class="card"><div class="dim">Best mock score</div><div class="stat" id="s-best">&mdash;</div><div class="dim" id="s-bestb">350 needed to pass</div></div>
+  </div>
+
+  <h2>Domain readiness</h2>
+  <p class="dim" style="margin-top:-6px">Accuracy per domain from your practice and mock answers. Weight is the real number of exam questions.</p>
+  <div class="grid g3" id="home-domains" style="margin-bottom:18px"></div>
+
+  <div class="grid g2">
+    <div class="card">
+      <h3>How to use this</h3>
+      <ul class="clean muted" style="font-size:14px">
+        <li><strong>Read one domain</strong> in Study, then immediately drill that domain in Practice. Loop.</li>
+        <li><strong>Flashcards</strong> are for the vocabulary and the numbers &mdash; job names, config keys, EVENTSOURCE values, ranks.</li>
+        <li><strong>Mock exam</strong> only once you are above ~75% in practice. It draws to the true 15/15/10/10/15/5 weighting.</li>
+        <li>Use the <strong>SailPoint bridge</strong> to anchor new terms, then drop it. The exam tests Saviynt&rsquo;s object model directly.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>The mindset that passes</h3>
+      <p class="muted" style="font-size:14px">Think in <strong>flows and relationships</strong>, not isolated features.
+      Identity data lands in the warehouse. Access is requested through ARS. Rules automate lifecycle outcomes.
+      SoD checks whether combinations are toxic. Attestation reviews what exists. Analytics reports what happened.</p>
+      <p class="muted" style="font-size:14px">On an ambiguous scenario question, first identify <em>which domain it belongs to</em>.
+      That alone usually eliminates half the options.</p>
+      <button class="btn gho" data-reset="1" style="margin-top:4px">Reset all my progress</button>
+    </div>
+  </div>
+</section>
+
+<!-- BLUEPRINT -->
+<section class="page" id="p-blueprint">
+  <div class="kicker">Verified against the published guide</div>
+  <h1>Exam blueprint &amp; logistics</h1>
+
+  <div class="grid g2" style="margin:18px 0">
+    <div class="card">
+      <h3>Content outline (official)</h3>
+      <div class="scroll"><table>
+        <thead><tr><th>#</th><th>Domain</th><th style="text-align:right">Questions</th><th style="text-align:right">Weight</th></tr></thead>
+        <tbody id="bp-rows"></tbody>
+        <tfoot><tr><th></th><th>Total</th><th style="text-align:right">70</th><th style="text-align:right">100%</th></tr></tfoot>
+      </table></div>
+      <p class="dim" style="margin-top:10px">15 + 15 + 10 + 10 + 15 + 5 = 70. The table is internally consistent.</p>
+    </div>
+    <div class="card">
+      <h3>Exam facts</h3>
+      <div class="scroll"><table><tbody>
+        <tr><th>Exam code</th><td>SAVIGA-C01</td></tr>
+        <tr><th>Level</th><td>Beginner / professional, basic to medium complexity use cases</td></tr>
+        <tr><th>Questions</th><td>70</td></tr>
+        <tr><th>Duration</th><td>2 hours</td></tr>
+        <tr><th>Formats</th><td>Multiple choice (1 of 4), Multiple response (2+ of 4), Scenario based (2+ of 4)</td></tr>
+        <tr><th>Scoring</th><td>50&ndash;500 scale, <strong>350 to pass</strong>, compensatory model</td></tr>
+        <tr><th>Negative marking</th><td>None. Unanswered counts as incorrect &mdash; so answer everything.</td></tr>
+        <tr><th>Prerequisite</th><td>Saviynt IGA Level 100 training (classroom or self-paced) is mandatory</td></tr>
+        <tr><th>Delivery</th><td>Online proctored (ProctorU / Examity)</td></tr>
+        <tr><th>Experience</th><td>1&ndash;3 months hands-on with Saviynt IGA recommended</td></tr>
+        <tr><th>Fee</th><td>USD 300 per attempt</td></tr>
+        <tr><th>Validity</th><td>24 months; recertification window opens 60 days before expiry</td></tr>
+        <tr><th>Retake</th><td>After 24 hours, no attempt limit, full fee each time</td></tr>
+      </tbody></table></div>
+    </div>
+  </div>
+
+  <div class="note">
+    <strong>Two conflicting passing scores exist in official material.</strong>
+    The current Exam Preparation Guide states a 50&ndash;500 scale with a minimum passing score of 350.
+    The older Certification Program FAQ PDF still says &ldquo;70%&rdquo;. Treat the Exam Preparation Guide as authoritative
+    for the current scoring model. This app scores mocks on the 50&ndash;500 scale and also shows your raw percentage
+    so you can sanity-check yourself against both.
+  </div>
+
+  <div class="note">
+    <strong>Question-type wording quirk.</strong> The guide says &ldquo;there are two types of questions&rdquo; and then lists three
+    (multiple choice, multiple response, scenario based). Its own sample question 1 is a True/False item.
+    Expect True/False to appear in practice even though it is not named in the type list &mdash; this app includes them.
+  </div>
+
+  <h2 style="margin-top:26px">Compensatory scoring &mdash; what it actually means</h2>
+  <div class="card">
+    <p class="muted">You do <strong>not</strong> need to pass each domain individually. Your total scaled score is what decides pass or fail.
+    That has a practical consequence: the two 15-question domains (Building Identity Warehouse and ARS) plus Attestation
+    are <strong>64% of the exam between them</strong>. Analytics is only 5 questions &mdash; worth knowing cold because it is small,
+    but never worth more study time than ARS.</p>
+    <p class="muted" style="margin-bottom:0">Your score report shows per-domain performance bands, which is why this hub tracks
+    accuracy per domain rather than just an overall number.</p>
+  </div>
+</section>
+
+<!-- STUDY -->
+<section class="page" id="p-study">
+  <div class="kicker">Six domains, in platform order</div>
+  <h1>Study</h1>
+  <p class="muted">Read a domain, then drill it. Each domain ends with the traps that actually cost people marks.</p>
+  <div class="grid g3" id="study-tiles" style="margin:18px 0"></div>
+  <div id="study-detail"></div>
+</section>
+
+<!-- FLASHCARDS -->
+<section class="page" id="p-cards">
+  <div class="kicker">150 cards</div>
+  <h1>Flashcards</h1>
+  <div class="row" style="margin:14px 0">
+    <select id="fc-sec"></select>
+    <label class="row" style="gap:6px"><input type="checkbox" id="fc-unknown"/> <span class="muted" style="font-size:14px">Only cards I haven&rsquo;t marked known</span></label>
+    <button class="btn gho" id="fc-shuffle">Shuffle</button>
+    <span class="dim" id="fc-count"></span>
+  </div>
+  <div class="fc-stage">
+    <div class="fc" id="fc" tabindex="0" role="button" aria-label="Flashcard, click or press space to flip">
+      <div class="fc-face front"><span class="tag" id="fc-tag" style="margin-bottom:14px"></span><div class="big" id="fc-front"></div><div class="fc-hint">Click, or press Space, to reveal</div></div>
+      <div class="fc-face back"><div class="ans" id="fc-back"></div><div class="fc-hint">Click to flip back</div></div>
+    </div>
+  </div>
+  <div class="row" style="justify-content:space-between">
+    <button class="btn sec" id="fc-prev">&larr; Previous</button>
+    <div class="row">
+      <button class="btn gho" id="fc-review">Needs review</button>
+      <button class="btn" id="fc-known">I know this</button>
+    </div>
+    <button class="btn sec" id="fc-next">Next &rarr;</button>
+  </div>
+  <p class="dim" style="margin-top:12px">Keyboard: <kbd>&larr;</kbd> <kbd>&rarr;</kbd> to move, <kbd>Space</kbd> to flip, <kbd>K</kbd> known, <kbd>R</kbd> review.</p>
+</section>
+
+<!-- PRACTICE -->
+<section class="page" id="p-practice">
+  <div class="kicker">177 questions with explanations</div>
+  <h1>Practice</h1>
+  <div class="row" style="margin:14px 0">
+    <select id="pr-sec"></select>
+    <select id="pr-type">
+      <option value="all">All formats</option>
+      <option value="mc">Multiple choice</option>
+      <option value="mr">Multiple response</option>
+      <option value="tf">True / False</option>
+      <option value="sc">Scenario based</option>
+    </select>
+    <select id="pr-filter">
+      <option value="all">All questions</option>
+      <option value="unseen">Not yet answered</option>
+      <option value="wrong">Previously got wrong</option>
+    </select>
+    <button class="btn gho" id="pr-shuffle">Shuffle</button>
+    <span class="dim" id="pr-count"></span>
+  </div>
+  <div class="card" id="pr-card"></div>
+  <div class="row" style="margin-top:14px;justify-content:space-between">
+    <button class="btn sec" id="pr-prev">&larr; Previous</button>
+    <button class="btn" id="pr-next">Next &rarr;</button>
+  </div>
+</section>
+
+<!-- EXAM -->
+<section class="page" id="p-exam">
+  <div id="exam-setup">
+    <div class="kicker">Weighted to the real blueprint</div>
+    <h1>Mock exam</h1>
+    <p class="muted" style="max-width:62ch">70 questions drawn 15 / 15 / 10 / 10 / 15 / 5 across the six domains,
+    exactly as the official content outline specifies. 2 hours on the clock. Scored on the 50&ndash;500 scale with 350 to pass.
+    No feedback until you submit &mdash; same as the real thing.</p>
+    <div class="grid g3" style="margin:18px 0">
+      <div class="card"><div class="dim">Questions</div><div class="stat">70</div></div>
+      <div class="card"><div class="dim">Time limit</div><div class="stat">120<span style="font-size:15px;font-weight:500"> min</span></div></div>
+      <div class="card"><div class="dim">Pass mark</div><div class="stat">350<span style="font-size:15px;font-weight:500"> / 500</span></div></div>
+    </div>
+    <div class="row">
+      <button class="btn" id="ex-start">Start the exam</button>
+      <label class="row" style="gap:6px"><input type="checkbox" id="ex-untimed"/><span class="muted" style="font-size:14px">Untimed practice mode</span></label>
+    </div>
+    <div id="ex-history" style="margin-top:26px"></div>
+  </div>
+
+  <div id="exam-run" style="display:none">
+    <div class="card" style="position:sticky;top:56px;z-index:20;padding:12px 16px;margin-bottom:16px">
+      <div class="row" style="justify-content:space-between">
+        <div class="row" style="gap:12px">
+          <strong id="ex-pos"></strong>
+          <span class="dim" id="ex-answered"></span>
+        </div>
+        <div class="row">
+          <span class="timer" id="ex-timer"></span>
+          <button class="btn gho" id="ex-flag">Flag</button>
+          <button class="btn sec" id="ex-submit">Submit</button>
+        </div>
+      </div>
+      <div class="bar" style="margin-top:10px"><i id="ex-bar"></i></div>
+    </div>
+    <div class="card" id="ex-card"></div>
+    <div class="row" style="margin:14px 0;justify-content:space-between">
+      <button class="btn sec" id="ex-prev">&larr; Previous</button>
+      <button class="btn" id="ex-next">Next &rarr;</button>
+    </div>
+    <details><summary>Question navigator</summary><div class="pal" id="ex-pal" style="margin-top:12px"></div></details>
+  </div>
+
+  <div id="exam-result" style="display:none"></div>
+</section>
+
+<!-- BRIDGE -->
+<section class="page" id="p-bridge">
+  <div class="kicker">For the SailPoint engineer</div>
+  <h1>Saviynt &harr; SailPoint bridge</h1>
+  <p class="muted" style="max-width:64ch">A study aid, not a vendor-official mapping. Use it to anchor unfamiliar Saviynt vocabulary
+  to something you already know, then let it go &mdash; the exam tests Saviynt&rsquo;s object model on its own terms.</p>
+  <div class="note">
+    <strong>The three that trip people up.</strong>
+    <strong>SAV Role</strong> is an admin capability, not requestable business access.
+    <strong>Security System</strong> has no clean SailPoint equivalent &mdash; it is a container above the Source.
+    And <strong>&ldquo;Policy&rdquo;</strong> is a false friend: SailPoint policy means a governance check, while Saviynt&rsquo;s Policies menu is rule-driven automation and SoD is its own module.
+  </div>
+  <div class="card" style="margin-top:16px">
+    <input type="text" id="br-search" placeholder="Filter&hellip;" style="width:100%;margin-bottom:12px"/>
+    <div class="scroll"><table>
+      <thead><tr><th>Saviynt</th><th>Closest SailPoint anchor</th><th>Note</th></tr></thead>
+      <tbody id="br-rows"></tbody>
+    </table></div>
+  </div>
+</section>
+
+<!-- GLOSSARY -->
+<section class="page" id="p-glossary">
+  <div class="kicker">Vocabulary</div>
+  <h1>Glossary</h1>
+  <div class="card" style="margin-top:16px">
+    <input type="text" id="gl-search" placeholder="Filter&hellip;" style="width:100%;margin-bottom:12px"/>
+    <div class="scroll"><table><tbody id="gl-rows"></tbody></table></div>
+  </div>
+</section>
+
+<!-- SOURCES -->
+<section class="page" id="p-sources">
+  <div class="kicker">Where every claim comes from</div>
+  <h1>Sources</h1>
+  <p class="muted" style="max-width:64ch">Official Saviynt material is the authority. Project training material supports explanations.
+  No community exam dumps were used as the sole basis for any answer.</p>
+  <div class="grid g2" id="src-rows" style="margin-top:18px"></div>
+  <div class="note good" style="margin-top:22px">
+    <strong>Public build.</strong> This edition is built only from publicly available Saviynt documentation and the published Exam Preparation Guide. Items sourced from the L100 Summative Quiz and the official Practice Exam are excluded, because that material is distributed to Saviynt employees, partners and customers rather than published openly. The full internal edition adds those 48 items.
+  </div>
+</section>
+
+</main>
+<script>
+const DATA = {"questions": [{"id": 11, "s": 1, "t": "mc", "q": "In the Saviynt object model, which object is created FIRST when onboarding an application through the classic Identity Repository flow?", "o": ["Endpoint", "Connection", "Security System", "Entitlement Type"], "a": [2], "e": "Order is Security System -> Endpoint -> Connection. The Security System is the governance container that groups endpoints sharing a connection and workflows.", "src": "EIC Admin Guide / v0.1 guide"}, {"id": 12, "s": 1, "t": "mr", "q": "Which statements correctly describe the relationship between Security System, Endpoint and Connection? (Select all that apply)", "o": ["Security System groups endpoints that share the same connection and workflows", "Endpoint is the actual target application instance inside EIC", "Connection is the configuration used to connect EIC to the target application", "A Connection is mandatory for a disconnected application"], "a": [0, 1, 2], "e": "A disconnected (file-based) application does not need a Connection - data comes from CSV files and provisioning is manual.", "src": "EIC Admin Guide"}, {"id": 13, "s": 1, "t": "mc", "q": "Where is the User-Account Correlation Rule configured?", "o": ["Admin > Global Configurations > Identity Lifecycle", "Admin > Identity Repository > Security Systems > Endpoint", "Admin > Job Control Panel > Data", "Admin > Settings > File Directory"], "a": [1], "e": "Correlation is an endpoint-level setting: ADMIN > Identity Repository > Security Systems > Endpoint > User Account Correlation Rule.", "src": "EIC Admin Guide"}, {"id": 14, "s": 1, "t": "mc", "q": "What happens to imported accounts that do not map to any user in EIC?", "o": ["They are deleted at the end of the import", "They are imported as orphan accounts", "They are converted into entitlements", "The import job fails"], "a": [1], "e": "Accounts with no correlating user become orphan accounts. Define the User-Account Correlation Rule BEFORE importing accounts.", "src": "EIC Admin Guide"}, {"id": 15, "s": 1, "t": "mc", "q": "Which Job Type is used to import users from an authoritative HR source over an established connection?", "o": ["SchemaUserJob", "UserImportJob (User Import via a Connection)", "WSRETRYJOB", "ConnectorServerReconJob"], "a": [1], "e": "ADMIN > Job Control Panel > DATA > User Import via a Connection (UserImportJob).", "src": "EIC Admin Guide"}, {"id": 16, "s": 1, "t": "mr", "q": "Which values are valid for the 'Allow User Operation' parameter on the User Import job? (Select all that apply)", "o": ["Create And Update", "Create Only", "Update Only", "Delete Only"], "a": [0, 1, 2], "e": "Create And Update is the default. There is no 'Delete Only' option - removals are governed by 'User Not in Feed Action'.", "src": "EIC Admin Guide"}, {"id": 17, "s": 1, "t": "mc", "q": "On the User Import job, which 'User Not in Feed Action' sets a user inactive WITHOUT terminating them or creating a Revoke Access task, even if termination-from-imports is enabled?", "o": ["No Action", "In-Activate", "InactivateUserOnly", "DeleteUser"], "a": [2], "e": "InactivateUserOnly deliberately bypasses termination and revoke-task creation. 'In-Activate' can terminate and create revoke tasks depending on the OFFBOARDING global config.", "src": "EIC Admin Guide"}, {"id": 18, "s": 1, "t": "mc", "q": "What is the default user import batch size if job.ecm.userimport.batchsize is not specified in externalconfig.properties?", "o": ["100", "500", "1000", "7500"], "a": [1], "e": "Default batch size is 500. (Do not confuse with USERTHRESHOLD default 1000, or analyticsindexbatchcount default 7500.)", "src": "EIC Admin Guide"}, {"id": 19, "s": 1, "t": "mc", "q": "What is the maximum CSV file size for Bulk User Upload?", "o": ["5 MB", "10 MB", "25 MB", "50 MB"], "a": [1], "e": "Max 10 MB, via Admin > Identity Management > Bulk User Upload. The SAV role also needs the 'Upload User' privilege.", "src": "EIC Admin Guide"}, {"id": 20, "s": 1, "t": "mr", "q": "Which role types appear in the Saviynt UI role-type list? (Select all that apply)", "o": ["Emergency Access", "Enterprise", "Application", "Entitlement"], "a": [0, 1, 2, 3], "e": "All four are UI role types. On CSV import the numeric ROLETYPE mapping is different: ENABLER=1, TRANSACTIONAL=2, FIREFIGHTER=3, ENTERPRISE=4, APPLICATION=5, ENTITLEMENTBASEDROLE=6.", "src": "EIC Admin Guide"}, {"id": 21, "s": 1, "t": "mc", "q": "When importing roles via role_ents.csv, which ROLETYPE integer represents an Enterprise role?", "o": ["2", "3", "4", "5"], "a": [2], "e": "ENABLER=1, TRANSACTIONAL=2, FIREFIGHTER=3, ENTERPRISE=4, APPLICATION=5, ENTITLEMENTBASEDROLE=6.", "src": "EIC Admin Guide"}, {"id": 23, "s": 1, "t": "mc", "q": "Which role type spans entitlements across MULTIPLE endpoints/applications?", "o": ["Application Role", "Enterprise Role", "Entitlement Role", "Emergency Access Role"], "a": [1], "e": "Enterprise Role = cross-application bundle. Application Role is limited to a single application/endpoint.", "src": "EIC Admin Guide"}, {"id": 24, "s": 1, "t": "mc", "q": "What is the correct import order when loading roles through Database import jobs?", "o": ["Roles -> Entitlements -> Role Owners", "Entitlements -> Roles -> Role Owners", "Role Owners -> Roles -> Entitlements", "Roles -> Role Owners -> Entitlements"], "a": [1], "e": "Import entitlements first, then roles, then role owners. RoleOwner Import must run only after Roles Import (Complete) from Database.", "src": "EIC Admin Guide"}, {"id": 25, "s": 1, "t": "mr", "q": "Which of the following are TRUE about out-of-the-box (OOTB) SAV Roles? (Select all that apply)", "o": ["You cannot add or remove feature access on them", "You cannot add web service access on them", "You cannot delete them", "You can freely rename them"], "a": [0, 1, 2], "e": "OOTB SAV Roles cannot be updated, deleted, or have feature/web-service access changed. To customise, clone one (Create Sav Role > Copy Existing).", "src": "EIC Admin Guide"}, {"id": 26, "s": 1, "t": "mc", "q": "When you copy/clone an existing SAV Role, which of the following is NOT carried over to the new role?", "o": ["Feature Access", "Web Service Access", "Users", "Role description fields"], "a": [2], "e": "Feature Access and Web Service Access are cloned; Users are NOT. You must add users to the new role separately.", "src": "EIC Admin Guide"}, {"id": 27, "s": 1, "t": "mc", "q": "After adding or removing a user from a SAV Role, what must happen for the change to take effect?", "o": ["Nothing, it is immediate", "The user must log out and log back in", "The Saviynt service must be restarted in all releases", "A WSRETRY job must run"], "a": [1], "e": "The user must log out and log in. Service restart for feature/web-service access changes was a v23.2-and-earlier behaviour and is release-dependent.", "src": "EIC Admin Guide"}, {"id": 28, "s": 1, "t": "mc", "q": "What does 'Baselining' identify in Saviynt?", "o": ["Orphan accounts only", "Rogue or out-of-band accounts and access managed outside Saviynt", "The default SAV Role for a connection", "The minimum entitlement set for a birthright rule"], "a": [1], "e": "Baselining detects access granted outside Saviynt (out-of-band/rogue) and compares it against a baseline. Re-Baseline handles incremental changes, e.g. after M&A.", "src": "EIC Admin Guide"}, {"id": 29, "s": 1, "t": "mc", "q": "Which term does Saviynt use interchangeably with 'application onboarding'?", "o": ["Reconciliation", "Enrollment", "Correlation", "Baselining"], "a": [1], "e": "Onboarding and Enrollment mean the same thing in the Saviynt docs and UI.", "src": "EIC Admin Guide"}, {"id": 30, "s": 1, "t": "mr", "q": "After enrolling a DISCONNECTED application, which three jobs are created to import the uploaded CSV data? (Select all that apply)", "o": ["applicationonboarding_account", "applicationonboarding_entitlement", "applicationonboarding_entitlementassociation", "applicationonboarding_user"], "a": [0, 1, 2], "e": "Three jobs: accounts, entitlements, and entitlement associations. There is no user job in this set - users come from the authoritative source.", "src": "EIC Admin Guide"}, {"id": 31, "s": 1, "t": "mc", "q": "A disconnected application stores its data in flat files. Which provisioning options are available?", "o": ["Automated SOAP/DB/REST only", "Manual - Saviynt Help Desk, or Manual - Service Desk (ServiceNow/Remedy)", "Instant provisioning only", "No provisioning is possible"], "a": [1], "e": "Disconnected apps use manual provisioning: Saviynt Help Desk tasks, or a Service Desk integration such as ServiceNow or Remedy.", "src": "EIC Admin Guide"}, {"id": 32, "s": 1, "t": "mc", "q": "After completing the enrollment wizard for a connected application, what must you click so the configuration leaves draft mode?", "o": ["Test Connection", "Complete Enrollment", "Commit Changes", "Run Now"], "a": [2], "e": "If you do not click Commit Changes, the application configuration stays in draft mode.", "src": "EIC Admin Guide"}, {"id": 39, "s": 1, "t": "mc", "q": "Regarding step-up authentication in EIC, which statement is correct?", "o": ["It is supported during the login process when EIC is the authentication source", "It is supported when an already-logged-in user changes password via the Profile menu", "It replaces SSO entirely", "It is only available for ROLE_ADMIN"], "a": [1], "e": "Exam trap: step-up auth (Email OTP, SMS OTP, KBA) works for an already-logged-in user changing password from the Profile menu, but is NOT supported during the login process itself when EIC is the auth source.", "src": "EIC Admin Guide"}, {"id": 40, "s": 1, "t": "mc", "q": "In a schema-based user upload, which property tells Saviynt which attribute to match on when deciding create vs update?", "o": ["FILENAMESTARTSWITH", "userReconcillationField", "USER_NOT_IN_FILE_ACTION", "SKIP_NUMBER_OF_LINES"], "a": [1], "e": "userReconcillationField (e.g. username) is the match key. USER_NOT_IN_FILE_ACTION governs what happens to users absent from the file.", "src": "EIC Admin Guide"}, {"id": 41, "s": 1, "t": "mr", "q": "Which values are valid for USER_NOT_IN_FILE_ACTION in a SAV properties file? (Select all that apply)", "o": ["NoAction", "InactivateUser", "DeleteUser", "TerminateOnly"], "a": [0, 1, 2], "e": "NoAction, InactivateUser, DeleteUser. Pair with InactiveUserOnly=true to avoid mass-inactivating everyone when the file is only a partial feed.", "src": "EIC Admin Guide"}, {"id": 42, "s": 1, "t": "mc", "q": "EIC REST APIs use which authentication scheme?", "o": ["Basic authentication only", "OAuth 2.0 with a Bearer access token", "API key in the URL query string", "Mutual TLS only"], "a": [1], "e": "OAuth 2.0; the access token is passed as a Bearer token. Generate via Admin > Settings > Webservice Auth Configuration > Generate Token.", "src": "EIC Admin Guide"}, {"id": 43, "s": 1, "t": "mc", "q": "Which SAV Role can access ALL REST endpoints without adding individual web service access?", "o": ["ROLE_SAV_MANAGER", "ROLE_ADMIN", "ROLE_USER", "ROLE_ENDUSER"], "a": [1], "e": "ROLE_ADMIN has access to all REST endpoints. Any other SAV role needs the specific webservice access added (e.g. webservice_api_changePassword).", "src": "EIC Admin Guide"}, {"id": 50, "s": 2, "t": "mr", "q": "Which four elements does every access request have at minimum? (Select all that apply)", "o": ["Requester", "Beneficiary", "Application (Endpoint)", "Approvers"], "a": [0, 1, 2, 3], "e": "Requester (who raises it), Beneficiary (who receives it), Application/Endpoint, and Approvers.", "src": "EIC Admin Guide"}, {"id": 51, "s": 2, "t": "mc", "q": "Which Security System setting, if left unset, prevents an application from appearing on the access request screen?", "o": ["Provisioning Threshold", "Access Add Workflow", "Primary Account Type", "Default SAV Role"], "a": [1], "e": "Both Access Add Workflow and Access Remove Workflow must be set; if either is missing the app is not displayed for request.", "src": "EIC Admin Guide"}, {"id": 52, "s": 2, "t": "mc", "q": "Where is the 'Requestable' flag configured for an application?", "o": ["On the Security System Detail page", "On the Endpoint Detail page", "In Global Configuration > Request", "On the Connection"], "a": [1], "e": "Requestable is an Endpoint-level setting and is enabled by default. An Access Query can further restrict who may request it.", "src": "EIC Admin Guide"}, {"id": 53, "s": 2, "t": "mr", "q": "Which of the following are NOT supported in multi-user requests but ARE supported in single-user requests? (Select all that apply)", "o": ["Copy access", "Modify status/state (Enable/Disable, Lock/Unlock)", "Update end date for existing access", "Submitting a business justification"], "a": [0, 1, 2], "e": "Multi-user requests also cannot do cascading for privileges, endpoint mapping, modifying existing access for multiple users, or requesting application collections.", "src": "EIC Admin Guide"}, {"id": 54, "s": 2, "t": "mc", "q": "Which SAV Role setting controls WHO a user is allowed to raise requests for?", "o": ["Whom to Request", "For Whom Can the Role User Approve the Request", "Request History", "Show SOD in Request"], "a": [0], "e": "'Whom to Request' defines scope such as one level down or two levels down the org hierarchy.", "src": "EIC Admin Guide"}, {"id": 55, "s": 2, "t": "mc", "q": "Which SAV Role setting controls the scope of requests a user may APPROVE?", "o": ["Whom to Request", "For Whom Can the Role User Approve the Request", "Request History", "Show Consult"], "a": [1], "e": "Options include 'Cannot Approve Any Request', 'Approve all requests assigned to me', approve for direct reports plus self, and approve all requests.", "src": "EIC Admin Guide"}, {"id": 56, "s": 2, "t": "mc", "q": "Which technology does EIC use to index and search the application catalog for ARS?", "o": ["Redis", "Elasticsearch", "MongoDB", "Apache Solr"], "a": [1], "e": "Elasticsearch backs catalog search. After catalog changes you must trigger the endpoint sync job for them to be reflected.", "src": "EIC Admin Guide"}, {"id": 57, "s": 2, "t": "mc", "q": "After you change requestable applications, which job must run for the change to show up in the ARS catalog?", "o": ["WSRETRYJOB", "Endpoint sync job", "DetectiveProvisioningRulesJob", "CAMPAIGNEXPIREDJOB"], "a": [1], "e": "The endpoint sync job refreshes the Elasticsearch-backed catalog.", "src": "EIC Admin Guide"}, {"id": 58, "s": 2, "t": "mr", "q": "Which workflow types can be selected when creating a workflow in the Graphical Workflow Editor? (Select all that apply)", "o": ["Parallel", "Serial", "Conditional", "Recursive"], "a": [0, 1], "e": "Parallel (tasks run simultaneously) and Serial (tasks run sequentially).", "src": "EIC Admin Guide"}, {"id": 59, "s": 2, "t": "mr", "q": "Which characters or patterns are NOT permitted in a workflow name? (Select all that apply)", "o": ["Periods (.)", "Blank spaces", "Duplicate names already in use", "Uppercase letters"], "a": [0, 1, 2], "e": "Periods are unsupported, the name must be unique, and it must not contain a blank space. Case is not restricted.", "src": "EIC Admin Guide"}, {"id": 60, "s": 2, "t": "mc", "q": "After saving a new workflow, what status does it hold?", "o": ["Active", "Pending Approval", "Inactive", "Composing"], "a": [1], "e": "Saved workflows sit in Pending for Approval. Approving moves them to Active; rejecting moves them to Inactive; discontinue moves them back to Composing.", "src": "EIC Admin Guide"}, {"id": 61, "s": 2, "t": "mc", "q": "Which workflow status is required before a workflow can be associated to a Security System?", "o": ["Composing", "Pending Approval", "Active", "Inactive"], "a": [2], "e": "Only Active workflows can be associated. Only one version of a workflow can be Active at a time.", "src": "EIC Admin Guide"}, {"id": 62, "s": 2, "t": "mc", "q": "You edit an already-Active workflow. What happens?", "o": ["The active version is overwritten in place", "A new version is created in composing status and the older version becomes inactive", "The change is rejected", "All associated Security Systems are unlinked"], "a": [1], "e": "Versioning: each change increments the version by 1; the previous version becomes inactive. Only one workflow version can be active at a time.", "src": "EIC Admin Guide"}, {"id": 63, "s": 2, "t": "mc", "q": "If you author a workflow using the XML editor, what must match for it to work properly?", "o": ["The workflow name and the process name in the XML", "The workflow name and the Security System name", "The XML version and the EIC release", "The workflow owner and the endpoint owner"], "a": [0], "e": "Workflow name and the process name declared inside the XML must match.", "src": "EIC Admin Guide"}, {"id": 64, "s": 2, "t": "mc", "q": "On an Entitlement Type, which setting makes it submittable by an end user?", "o": ["Requestable", "Required", "Editable", "Visible"], "a": [0], "e": "The Request Option set to Requestable means end users can submit it. The Privileges tab additionally exposes REQUESTABLE / REQUIRED / EDITABLE per attribute.", "src": "EIC Admin Guide"}, {"id": 68, "s": 2, "t": "mc", "q": "What is created in EIC when an access request is fully approved?", "o": ["A certification", "A provisioning Task", "A mitigating control", "An analytics control"], "a": [1], "e": "Approval creates Tasks (Add Access, New Account, Remove Access, etc.) which are tracked to confirm provisioning completed.", "src": "EIC Admin Guide"}, {"id": 69, "s": 2, "t": "mr", "q": "Besides approved ARS requests, where else can provisioning Tasks originate? (Select all that apply)", "o": ["Requests submitted through APIs", "Certification campaigns", "Analytics (actionable reports)", "SOD violations"], "a": [0, 1, 2, 3], "e": "All four generate tasks. This is why the Pending Tasks queue is the single operational funnel in EIC.", "src": "EIC Admin Guide"}, {"id": 70, "s": 2, "t": "mr", "q": "Which of the following are valid Pending Task statuses? (Select all that apply)", "o": ["New", "In Progress", "Failed", "Risk Accepted"], "a": [0, 1, 2], "e": "Pending: New, In Progress, Failed. Completed task statuses are Completed, Discontinued, No Action Required, Error. 'Risk Accepted' is an SOD violation status, not a task status.", "src": "EIC Admin Guide"}, {"id": 71, "s": 2, "t": "mr", "q": "Which provisioning modes does EIC support? (Select all that apply)", "o": ["Manual provisioning", "Automated provisioning", "Instant provisioning", "Deferred provisioning"], "a": [0, 1, 2], "e": "Manual (complete tasks by hand), Automated (requires Automated Provisioning enabled + WSRETRY scheduled), and Instant (requires Automated + Instant Provisioning enabled; provisions the moment the task is created).", "src": "EIC Admin Guide"}, {"id": 72, "s": 2, "t": "mc", "q": "Which job provisions/de-provisions identity objects and automatically completes the corresponding tasks?", "o": ["DetectiveProvisioningRulesJob", "Provisioning Job (WSRETRYJOB)", "RiskSODEvaluationJob", "SchemaUserJob"], "a": [1], "e": "WSRETRYJOB. It does not just close tasks - it performs the actual provisioning against the target application.", "src": "EIC Admin Guide"}, {"id": 73, "s": 2, "t": "mc", "q": "Which prerequisite is required for INSTANT provisioning to work?", "o": ["Only Instant Provisioning enabled", "Both Automated Provisioning and Instant Provisioning enabled", "WSRETRY scheduled every minute", "A disconnected endpoint"], "a": [1], "e": "Instant provisioning requires Automated Provisioning to be enabled as well; tasks then provision immediately upon creation.", "src": "EIC Admin Guide"}, {"id": 74, "s": 2, "t": "mc", "q": "What does the 'Provisioning Threshold' setting on a Security System do?", "o": ["Limits how many entitlements a user can request", "Limits processing if the task count exceeds the threshold", "Sets the maximum number of approvers", "Caps the number of endpoints in the security system"], "a": [1], "e": "It is a safety guardrail: if the task count exceeds the threshold, processing is limited to prevent runaway provisioning.", "src": "EIC Admin Guide"}, {"id": 75, "s": 2, "t": "mc", "q": "Which single-threaded alternative to WSRETRYJOB waits for provisioning to complete before starting a new instance?", "o": ["WSBlockingRetryJob (Single Instance Provisioning Job)", "ConnectorServerReconJob", "CUSTOMQUERYJOB", "SODDetailJob"], "a": [0], "e": "WSBlockingRetryJob is enabled via a global config and serialises provisioning.", "src": "EIC Admin Guide"}, {"id": 76, "s": 2, "t": "mc", "q": "From release v23.1 onward, WSRETRYJOB runs only in which mode?", "o": ["Single-trigger mode", "Multi-trigger mode", "Blocking mode", "Preview mode"], "a": [1], "e": "From v23.1 WSRETRYJOB runs only in multi-trigger mode; from v23.2 'Number of Parallel Processes' was removed because EIC auto-calculates triggers.", "src": "EIC Admin Guide"}, {"id": 77, "s": 2, "t": "mc", "q": "Where do end users track the status of, and potentially modify, an existing request?", "o": ["Pending Approvals", "Request History", "Pending Tasks", "My Uploads"], "a": [1], "e": "Request History lets users check status, and (if configured) discontinue, modify or recreate a request.", "src": "EIC Admin Guide"}, {"id": 78, "s": 2, "t": "mc", "q": "Where are the approval, bulk-approval and request-notification behaviours configured?", "o": ["Admin > Menu > Global Configuration > Request", "Admin > Identity Repository > Security System", "Admin > Workflow > Workflow Approval", "Admin > Settings > Tab Config"], "a": [0], "e": "Applications > Admin > Menu > Global Configuration > Request covers Approval, Bulk Approvals, and Request History/Approval categories.", "src": "EIC Admin Guide"}, {"id": 79, "s": 2, "t": "mc", "q": "Where is the approval workflow for Enterprise Role requests configured?", "o": ["On the Endpoint Detail page", "Admin > Global Configuration > Role Request > Enterprise Role", "On the Security System Detail page", "On the role object itself"], "a": [1], "e": "Role Add Workflow and Role Remove Workflow live under Global Configuration > Role Request. Application access workflows live on the Security System - do not mix them up.", "src": "EIC Admin Guide"}, {"id": 80, "s": 2, "t": "mc", "q": "When creating dynamic attributes for an enterprise role request form, what must Request Type be set to?", "o": ["Application", "Role", "Account", "Entitlement"], "a": [1], "e": "Request Type = Role, otherwise the dynamic attribute will not surface on the enterprise role request form.", "src": "EIC Admin Guide"}, {"id": 81, "s": 2, "t": "mc", "q": "A configuration exists that blocks requesting a new account when the user already has one on that endpoint. What is it called?", "o": ["Show Inactive Accounts in ARS", "Disable new account request if account already exists", "Primary Account Type", "Create Task Action"], "a": [1], "e": "When enabled, the user cannot add another account request for that endpoint.", "src": "EIC Admin Guide"}, {"id": 82, "s": 2, "t": "mc", "q": "The 'Create Task Action' setting on a Security System controls what?", "o": ["Whether tasks are created for both account and entitlements, or entitlements only", "Whether tasks auto-complete", "Which SAV role can view tasks", "The retry interval for failed tasks"], "a": [0], "e": "You can create tasks for account + entitlements together, or entitlements only (creating the account after entitlement approval).", "src": "EIC Admin Guide"}, {"id": 83, "s": 2, "t": "mc", "q": "A user is a delegatee of another user who holds a different SAV Role. What is shown in their 'Request Access for Others' list?", "o": ["Only their own SAV Role scope", "Only the delegated user's SAV Role scope", "A list reflecting both the delegate's and the delegated user's SAV Role settings", "Nothing until the delegation expires"], "a": [2], "e": "Delegation merges the visible scope - the list can reflect both SAV Role configurations.", "src": "EIC Admin Guide"}, {"id": 84, "s": 2, "t": "mr", "q": "Which request types can be submitted through ARS? (Select all that apply)", "o": ["Single-user requests (self / for others)", "Multi-user requests including bulk Excel upload", "Service account requests", "Emergency access / enterprise role requests"], "a": [0, 1, 2, 3], "e": "All four. Service accounts can additionally be created, deleted, disabled, locked or transferred through ARS.", "src": "EIC Admin Guide"}, {"id": 85, "s": 2, "t": "mc", "q": "Which SAV Role feature must be enabled for a user to see SOD violations while raising an access request?", "o": ["Show SOD in Request", "Show Consult", "Request History", "Allow Request Update"], "a": [0], "e": "Enable 'Show SOD in Request' on the SAV Role Detail page. Global Configuration > SOD > 'Show Existing SOD in request' is the complementary platform-level switch.", "src": "EIC Admin Guide"}, {"id": 86, "s": 2, "t": "mc", "q": "Which UI path opens the self-service access request flow?", "o": ["Applications > Admin > Identity Repository > Endpoints", "Applications > Home > Menu > My Access > Request New Access", "Applications > SOD > SOD Violations", "Applications > Analytics > Analytics Configuration List"], "a": [1], "e": "Request New Access is the self tile; Request Access for Others is the on-behalf-of tile.", "src": "EIC Admin Guide"}, {"id": 87, "s": 2, "t": "mc", "q": "What is an 'Application Collection' in the ARS catalog?", "o": ["A group of endpoints sharing one connection", "A saved set of selected access items that can be requested together", "A certification campaign type", "A grouping of SOD functions"], "a": [1], "e": "During Request New Access a user can save their selections as an Application Collection for reuse. The consolidated catalog spans applications, enterprise roles, and application collections.", "src": "EIC Admin Guide"}, {"id": 88, "s": 2, "t": "mr", "q": "Which task types can EIC generate? (Select all that apply)", "o": ["Add Access / Remove Access", "New Account / Update Account", "Lock/Unlock Account, Enable/Disable Account", "Update Access End Date"], "a": [0, 1, 2, 3], "e": "Also Change Password and Update User. Knowing the task vocabulary makes scenario questions much faster.", "src": "EIC Admin Guide"}, {"id": 89, "s": 2, "t": "mc", "q": "An access request is approved but nothing appears in the target application. Which job most likely has not run?", "o": ["UserImportJob", "WSRETRYJOB", "RiskSODEvaluationJob", "CAMPAIGNEXPIREDJOB"], "a": [1], "e": "Approval creates the task; WSRETRY performs the provisioning and completes the task. Approval alone changes nothing in the target.", "src": "EIC Admin Guide"}, {"id": 98, "s": 3, "t": "mr", "q": "Which rule categories appear under Admin > Policies in EIC? (Select all that apply)", "o": ["Technical Rules", "User Update Rules", "Entitlement Update Rules", "Request Rules"], "a": [0, 1, 2, 3], "e": "Also Scan Rules and Organization Update Rules. With MicroServices enabled these collapse into a single 'Provisioning Rules' page.", "src": "EIC Admin Guide"}, {"id": 99, "s": 3, "t": "mc", "q": "Which rule type is used when single-user, multi-user, or bulk-upload requests are made from the Access Request System?", "o": ["Technical Rule", "Request Rule", "Scan Rule", "Organization Update Rule"], "a": [1], "e": "Request Rules evaluate at request time across single, multi, and bulk-upload request paths.", "src": "EIC Admin Guide"}, {"id": 100, "s": 3, "t": "mc", "q": "Which rule type provides the capability to scan for sensitive or confidential information?", "o": ["Scan Rule", "Technical Rule", "Request Rule", "Entitlement Update Rule"], "a": [0], "e": "Scan Rules drive Data Access Governance - classification categories such as PCI and PII, with actions like Quarantine, Access lockdown, and security-team alerts.", "src": "EIC Admin Guide"}, {"id": 101, "s": 3, "t": "mc", "q": "Entitlement Update Rules are used in conjunction with which kind of analytics control?", "o": ["Elastic runtime control of executable type", "Non-elastic analytical runtime control of preventative type", "ES-based SQL query control", "Custom analytics control"], "a": [1], "e": "Entitlement Update Rules pair with a NON-elastic runtime analytics control whose Executable Type = Preventative.", "src": "EIC Admin Guide"}, {"id": 102, "s": 3, "t": "mc", "q": "In the hanarule table, EVENTSOURCE value 7 corresponds to which trigger?", "o": ["User created from UI", "User updated from Import", "User removed from UI via One Click Disable", "User created from API calls"], "a": [2], "e": "1=created UI, 2=created Import, 3=created API, 4=updated UI, 5=updated Import, 6=updated API, 7=removed via One Click Disable.", "src": "EIC Admin Guide"}, {"id": 103, "s": 3, "t": "mc", "q": "EVENTSOURCE value 3 corresponds to which trigger?", "o": ["User created from UI", "User created from Import", "User created from API calls", "User updated from UI"], "a": [2], "e": "3 = user created from REST API calls. The 'created' block is 1/2/3 (UI/Import/API); the 'updated' block is 4/5/6 in the same order.", "src": "EIC Admin Guide"}, {"id": 104, "s": 3, "t": "mc", "q": "Which database column, when set to True, causes a rule to be picked up by the Detective Provisioning Job?", "o": ["EVENTSOURCE", "INVOKEBYDETECTIVEJOB", "ASSIGNEDFROMRULE", "REMOVEBIRTHRIGHTONFAIL"], "a": [1], "e": "INVOKEBYDETECTIVEJOB = True means DetectiveProvisioningRulesJob evaluates the rule.", "src": "EIC Admin Guide"}, {"id": 105, "s": 3, "t": "mc", "q": "Which job evaluates rules for EXISTING users and creates the resulting provisioning tasks?", "o": ["WSRETRYJOB", "DetectiveProvisioningRulesJob (Run Detective Rules and Take Action)", "UserImportJob", "RiskSODEvaluationJob"], "a": [1], "e": "DetectiveProvisioningRulesJob creates tasks; WSRETRY then performs the provisioning. Two separate jobs, two separate steps.", "src": "EIC Admin Guide"}, {"id": 106, "s": 3, "t": "mc", "q": "What does 'Remove Birthright Access if condition fails' do?", "o": ["Deletes the user's account and all access", "Creates revoke tasks for the rule-granted access while the account remains", "Removes access granted through the Access Request System", "Disables the rule"], "a": [1], "e": "Critical distinction: it removes ONLY access assigned by the rule (tracked via AssignedfromRule), not access granted through ARS. The account is retained.", "src": "EIC Admin Guide"}, {"id": 107, "s": 3, "t": "mc", "q": "When building a Technical Rule condition using basic configuration, what must the LAST condition be for the rule to be picked up correctly?", "o": ["OR", "AND", "NOT", "It does not matter"], "a": [1], "e": "A documented gotcha: with basic configuration the last condition must be AND.", "src": "EIC Admin Guide"}, {"id": 108, "s": 3, "t": "mc", "q": "In a Technical Rule action, which field selects the type of object to provision?", "o": ["Attribute", "Object Type", "Organization Name", "Birth Right"], "a": [1], "e": "Object Type (e.g. Endpoint, or EndpointName::EntitlementType). 'Object' is the value/name, 'Attribute' is typically 'Assigned'.", "src": "EIC Admin Guide"}, {"id": 109, "s": 3, "t": "mc", "q": "Which Technical Rule feature shows the impacted users BEFORE the rule is saved or sent for approval?", "o": ["Dry Run", "Preview", "Execution Trail", "View Impact"], "a": [1], "e": "Preview on a Technical Rule shows impacted users while in draft. ('Dry Run' is analytics; 'View Impact' is SOD remediation.)", "src": "EIC Admin Guide"}, {"id": 110, "s": 3, "t": "mc", "q": "Where is the workflow that approves new Identity Access Rules configured?", "o": ["Security System Detail", "Global Config > Identity Access Rules > Rule Add Workflow", "Admin > Workflow > Workflow Approval", "Endpoint Detail"], "a": [1], "e": "Send for Approval creates a Request ID when Rule Add Workflow is configured there.", "src": "EIC Admin Guide"}, {"id": 111, "s": 3, "t": "mc", "q": "On a Technical Rule, 'Evaluate Manager Hierarchy' becomes visible only after enabling which option?", "o": ["Birth Right", "Detective", "Preview", "Rank"], "a": [1], "e": "It depends on the Detective flag. Note it is performance intensive and can delay rule execution.", "src": "EIC Admin Guide"}, {"id": 112, "s": 3, "t": "mc", "q": "Which Endpoint setting controls whether Add Access tasks from Technical Rules are created only for one account type?", "o": ["Requestable", "Primary Account Type", "Access Query", "Default SAV Role"], "a": [1], "e": "If a Primary Account Type is selected, Add Access tasks are created only for that type; if none is selected, tasks are created for all active/manually-provisioned accounts across account types.", "src": "EIC Admin Guide"}, {"id": 113, "s": 3, "t": "mr", "q": "When a User Update Rule is triggered by 'One Click Disable', which actions remain available? (Select all that apply)", "o": ["Deprovision Role", "Discontinue Pending Task", "Notify Email", "Transfer Ownership"], "a": [0, 1, 2, 3], "e": "Also Create Update User Task, Re-run provisioning rules, and Re-run selected technical rules. The full action set is deliberately limited for this trigger.", "src": "EIC Admin Guide"}, {"id": 114, "s": 3, "t": "mc", "q": "Which User Update Rule action transfers ownership of identity objects when a user is disabled or terminated?", "o": ["Deprovision Access", "Transfer Ownership", "Disable User", "Discontinue Pending Task"], "a": [1], "e": "Transfer Ownership moves objects to the user named in 'Owner on Terminate' in User Details (typical condition: userstatuskey is 0).", "src": "EIC Admin Guide"}, {"id": 115, "s": 3, "t": "mc", "q": "In a leaver rule, what does leaving the 'Execute On' field EMPTY mean?", "o": ["The action never executes", "The action executes on the trigger day", "The action executes after 30 days", "The action requires manual approval"], "a": [1], "e": "Empty Execute On = execute on the trigger day. A value such as 30 defers the action, e.g. remove access on Day 0 but remove the account on Day 30.", "src": "EIC Admin Guide"}, {"id": 116, "s": 3, "t": "mc", "q": "Which condition must NOT be configured on a rule you want processed by DetectiveProvisioningRulesJob?", "o": ["'Is Updated'", "'Is Created'", "'Is Null'", "'Contains'"], "a": [0], "e": "Documented gotcha: 'Is Updated' must not be configured for rules intended to be processed through DetectiveProvisioningRulesJob.", "src": "EIC Admin Guide"}, {"id": 117, "s": 3, "t": "mc", "q": "In a User Update Rule advanced query, what is true about the user attributes referenced?", "o": ["They are case-insensitive", "They are case-sensitive", "They must be uppercase", "They must be prefixed with USR_"], "a": [1], "e": "Advanced query attributes are case-sensitive (username, firstname, statuskey, startdate, enddate, location, employeeType, departmentname...).", "src": "EIC Admin Guide"}, {"id": 118, "s": 3, "t": "mr", "q": "Which of the following are documented Technical Rule execution triggers? (Select all that apply)", "o": ["Users created via bulk import / DB import", "A new user created or registered from the EIC UI", "An existing user updated while re-running provisioning rules", "A campaign being locked"], "a": [0, 1, 2], "e": "Locking a campaign creates revoke tasks, it does not trigger Technical Rules.", "src": "EIC Admin Guide"}, {"id": 119, "s": 3, "t": "mc", "q": "Which column does EIC use to maintain the rule key for entitlements granted by a rule?", "o": ["EVENTSOURCE", "AssignedfromRule (in account_entitlements1)", "INVOKEBYDETECTIVEJOB", "ROLETYPE"], "a": [1], "e": "AssignedfromRule tracks rule-granted entitlements. The key is removed when the condition no longer matches and removeBirthRightOnFail is true.", "src": "EIC Admin Guide"}, {"id": 120, "s": 3, "t": "mc", "q": "Which property controls the in-scope file extensions for Data Access Governance scanning?", "o": ["scan.inscope.fileExtensions", "job.ecm.imp.file.path", "analyticsindexbatchcount", "job.ecm.userimport.batchsize"], "a": [0], "e": "e.g. scan.inscope.fileExtensions=doc,docx,xls,xlsx,ppt,pptx,pdf,txt,csv", "src": "EIC Admin Guide"}, {"id": 121, "s": 3, "t": "mr", "q": "Which actions can a Scan Rule take after classifying documents? (Select all that apply)", "o": ["Quarantine", "Access lockdown", "Send alerts to the security team", "Launch a certification campaign"], "a": [0, 1, 2], "e": "Quarantine, access lockdown, and alerting. Certification launch is a User Update Rule action, not a Scan Rule action.", "src": "EIC Admin Guide"}, {"id": 122, "s": 3, "t": "mc", "q": "After a User Update Rule creates Disable Account or Remove Account tasks, what does the guide caution against?", "o": ["Executing the pending tasks immediately", "Running WSRETRY at all", "Enabling the Detective flag", "Using Transfer Ownership"], "a": [0], "e": "Timing control matters in leaver flows - do not execute those pending tasks immediately.", "src": "EIC Admin Guide"}, {"id": 125, "s": 4, "t": "mc", "q": "What is a Function in the Saviynt SoD model?", "o": ["A toxic combination of access", "A logical grouping of entitlements defining an ability to perform business tasks", "A compensating control", "A set of risks"], "a": [1], "e": "Function = building block (grouping of entitlements). Risk = the toxic combination built FROM functions.", "src": "EIC Admin Guide"}, {"id": 126, "s": 4, "t": "mc", "q": "What is the maximum number of Functions that can make up a single Risk?", "o": ["3", "5", "10", "Unlimited"], "a": [1], "e": "A risk comprises one or more functions, maximum five.", "src": "EIC Admin Guide"}, {"id": 127, "s": 4, "t": "mc", "q": "A set of risks constitutes a __________.", "o": ["Function", "Ruleset", "Business Process", "Mitigating Control"], "a": [1], "e": "Ruleset = a set of risks. Ruleset architecture: primary objects (risks, functions) plus secondary objects (entitlement types, entitlement values).", "src": "EIC Admin Guide"}, {"id": 128, "s": 4, "t": "mr", "q": "Which ruleset types does Saviynt support? (Select all that apply)", "o": ["Non-SAP ruleset", "SAP ruleset", "Logical ruleset", "Elastic ruleset"], "a": [0, 1, 2], "e": "Non-SAP (entitlement based), SAP (SAP entitlements / Tcodes), and Logical (spanning multiple SAP systems with one ruleset).", "src": "EIC Admin Guide"}, {"id": 129, "s": 4, "t": "mr", "q": "Which methods can be used to create a Ruleset? (Select all that apply)", "o": ["User Interface", "Ruleset Upload File", "API", "Certification campaign"], "a": [0, 1, 2], "e": "UI, upload file, or API.", "src": "EIC Admin Guide"}, {"id": 130, "s": 4, "t": "mc", "q": "Which Risk Type is used when you add a SINGLE function to monitor restricted or critical access?", "o": ["SOD", "Critical Access", "Preventative", "Detective"], "a": [1], "e": "Risk Type = Critical Access for single-function restriction monitoring. Risk Type = SOD is for conflict combinations surfaced in the SOD violation workbench.", "src": "EIC Admin Guide"}, {"id": 131, "s": 4, "t": "mc", "q": "What is PREVENTATIVE SoD analysis?", "o": ["Analysis of access that already exists", "Conflict analysis performed at access-request time", "A scheduled report", "The process of accepting a violation"], "a": [1], "e": "Preventative = request time, before access is granted. Detective = after the access already exists.", "src": "EIC Admin Guide"}, {"id": 132, "s": 4, "t": "mc", "q": "What is DETECTIVE SoD analysis?", "o": ["Blocking a request before approval", "Identifying conflicts in access that already exists", "Creating mitigating controls", "Defining functions"], "a": [1], "e": "Detective identifies violations after the fact, including users who held access before it became a violation under a new ruleset.", "src": "EIC Admin Guide"}, {"id": 133, "s": 4, "t": "mc", "q": "Which job evaluates SOD violations for detective analysis?", "o": ["SOD Evaluation (RiskSODEvaluationJob)", "SODDetailJob", "MitigatingControlImportJob", "DetectiveProvisioningRulesJob"], "a": [0], "e": "RiskSODEvaluationJob, at ADMIN > Job Control Panel > SOD. SODDetailJob IMPORTS violations; MitigatingControlImportJob imports mitigating controls.", "src": "EIC Admin Guide"}, {"id": 134, "s": 4, "t": "tf", "q": "Multiple instances of RiskSODEvaluationJob can run concurrently.", "o": ["True", "False"], "a": [1], "e": "False - only ONE instance of RiskSODEvaluationJob can run at a time.", "src": "EIC Admin Guide"}, {"id": 135, "s": 4, "t": "mc", "q": "Which ruleset-level toggle enables SoD evaluation while a user is requesting access?", "o": ["Show Existing SOD in request", "Evaluate SODs during access request", "Show SOD in Request", "Class Filters On SOD"], "a": [1], "e": "'Evaluate SODs during access request' = Yes on the Ruleset Info section. The other options are global-config or SAV-role level settings.", "src": "EIC Admin Guide"}, {"id": 136, "s": 4, "t": "mc", "q": "What is the default value of sod.entitlement.depthForPreventativeSODEval?", "o": ["1", "2", "3", "5"], "a": [1], "e": "Default 2. Trap: if preventative depth is LESS than detective depth, some risks will not appear during the request and will only surface later in the detective workbench.", "src": "EIC Admin Guide"}, {"id": 137, "s": 4, "t": "mr", "q": "Which SOD Violation workbench status tabs exist? (Select all that apply)", "o": ["Open", "In Process", "Risk Accepted", "Closed / Remediated"], "a": [0, 1, 2, 3], "e": "Open, In Process, Risk Accepted, Closed, Remediated.", "src": "EIC Admin Guide"}, {"id": 138, "s": 4, "t": "mc", "q": "In which statuses can a violation be remediated or accepted from the SOD Violations workbench?", "o": ["Only Open", "Open or In Process", "Only Closed", "Risk Accepted only"], "a": [1], "e": "Both remediation and risk acceptance act on violations in Open or In Process status.", "src": "EIC Admin Guide"}, {"id": 139, "s": 4, "t": "mc", "q": "What is a Mitigating Control used for?", "o": ["To delete all violations automatically", "To document and govern an accepted exception / compensating control", "To create dashboards", "To convert roles into entitlements"], "a": [1], "e": "MCs reduce risk when full segregation is not achievable. Applying one moves the violation to Risk Accepted.", "src": "EIC Admin Guide"}, {"id": 140, "s": 4, "t": "mc", "q": "Can an EXPIRED mitigating control be applied to a violation on the SOD Violation screen?", "o": ["Yes, with approval", "Yes, if the owner overrides it", "No", "Only for Critical Access risks"], "a": [2], "e": "You cannot apply expired mitigating controls. Also, when adding a pre-mitigated association, the To Date must not exceed the MC expiry date.", "src": "EIC Admin Guide"}, {"id": 141, "s": 4, "t": "mr", "q": "Which Priority values can be set on a Mitigating Control? (Select all that apply)", "o": ["Low", "Medium", "High", "Critical"], "a": [0, 1, 2, 3], "e": "Low, Medium, High, Critical.", "src": "EIC Admin Guide"}, {"id": 142, "s": 4, "t": "mc", "q": "Which Mitigating Control Status means it CANNOT be used as a preventive or detective control?", "o": ["Active", "Inactive", "Composing", "Decommissioned"], "a": [1], "e": "Inactive. The guide also says not to select Composing / Sent for approval / Decommissioned - they are not currently used and are planned for removal.", "src": "EIC Admin Guide"}, {"id": 143, "s": 4, "t": "mc", "q": "What do PRE-MITIGATED associations do?", "o": ["Automatically mitigate violated risks for a user account for a predefined period, in both preventative and detective evaluation", "Recommend controls to the SOD owner", "Delete open violations", "Block the access request outright"], "a": [0], "e": "Pre-mitigated = automatic mitigation for a defined window across both evaluation modes. RECOMMENDED associations merely suggest MCs to the owner.", "src": "EIC Admin Guide"}, {"id": 144, "s": 4, "t": "mc", "q": "After applying a Mitigating Control to a violation, what status does it move to?", "o": ["Closed", "Remediated", "Risk Accepted", "In Process"], "a": [2], "e": "Risk Accepted. Edge case: if an In-Process item later has NO violation found (the entitlement was removed), it moves to Closed instead.", "src": "EIC Admin Guide"}, {"id": 145, "s": 4, "t": "mc", "q": "Under Global Configurations > SOD > Remediate options, which setting causes the risk to be moved to CLOSED?", "o": ["No Action", "Create Request", "Create Task", "Auto Accept"], "a": [2], "e": "No Action -> Remediated. Create Request -> Remediated. Create Task -> Closed.", "src": "EIC Admin Guide"}, {"id": 146, "s": 4, "t": "mc", "q": "How do you remediate an SOD violation?", "o": ["By applying a mitigating control", "By selecting the function and removing one or more entitlements from the offending account", "By discontinuing the campaign", "By deleting the ruleset"], "a": [1], "e": "Remediation removes the conflicting entitlement. Applying an MC is ACCEPTANCE, not remediation - a classic exam distinction.", "src": "EIC Admin Guide"}, {"id": 147, "s": 4, "t": "mc", "q": "Which workbench feature shows how many violations would be remediated and how many users impacted, before you act?", "o": ["Preview", "Dry Run", "VIEW IMPACT", "Run History"], "a": [2], "e": "VIEW IMPACT in the SOD Violations workbench.", "src": "EIC Admin Guide"}, {"id": 148, "s": 4, "t": "mr", "q": "Which SOD reports can be exported from the workbench? (Select all that apply)", "o": ["L1 Summary Report", "L2 Detailed Report", "L3 Permission Report", "L4 Executive Report"], "a": [0, 1, 2], "e": "L1 Summary, L2 Detailed, L3 Permission. There is no L4.", "src": "EIC Admin Guide"}, {"id": 149, "s": 4, "t": "mc", "q": "Above how many records does an L1 Summary Report trigger a background download job?", "o": ["500", "5,000", "50,000", "100,000"], "a": [0], "e": "L1 > 500 records triggers a background job. L2/L3 > 50,000 records triggers one. From v23.8 exports initiate the background job by default and land in My Downloads.", "src": "EIC Admin Guide"}, {"id": 150, "s": 4, "t": "mr", "q": "Which Group By options are available for SOD workbench Excel exports? (Select all that apply)", "o": ["Users", "Risk", "Business Process", "Actual Vs Potential"], "a": [0, 1, 2, 3], "e": "Also Parent Entitlement, Child Entitlement, Accepted Violations, and Endpoint.", "src": "EIC Admin Guide"}, {"id": 151, "s": 4, "t": "mc", "q": "In the SOD workbench, which users can see ALL risks?", "o": ["Any authenticated user", "Users with ROLE_ADMIN", "Only risk owners", "Only function owners"], "a": [1], "e": "ROLE_ADMIN sees all risks; non-ROLE_ADMIN users only see risks where their parent delegate is the risk owner.", "src": "EIC Admin Guide"}, {"id": 152, "s": 4, "t": "mc", "q": "Who can manage a Function in the SoD module?", "o": ["Any SOD user", "Only the function owner", "Only ROLE_ADMIN", "The endpoint owner"], "a": [1], "e": "Only the function owner can manage functions; likewise only the risk owner can manage risks.", "src": "EIC Admin Guide"}, {"id": 153, "s": 4, "t": "mc", "q": "What role does 'Business Process' play in preventative/detective SOD processing?", "o": ["It is the primary evaluation object", "It plays no major role in processing, but violations can be viewed and reported by business process", "It replaces the ruleset", "It determines the mitigating control priority"], "a": [1], "e": "Business process is a grouping of functions and roles used for reporting and visibility, not a major processing input.", "src": "EIC Admin Guide"}, {"id": 154, "s": 4, "t": "mc", "q": "At what level does Saviynt evaluate SOD risks?", "o": ["At the individual entitlement level only", "At the business function level, with functions mapped to coarse- and fine-grained entitlements", "At the endpoint level", "At the campaign level"], "a": [1], "e": "The business-function abstraction lets SOD rules align to business processes and simplifies ruleset maintenance.", "src": "EIC Admin Guide"}, {"id": 155, "s": 4, "t": "mr", "q": "Which global/role settings affect whether SOD details are visible during an access request? (Select all that apply)", "o": ["Global Configurations > SOD > Show Existing SOD in request", "SAV Role Detail > Show SOD in Request", "Ruleset > Evaluate SODs during access request", "Endpoint > Primary Account Type"], "a": [0, 1, 2], "e": "Three layers must line up: ruleset toggle, global config, and SAV role. Primary Account Type is a provisioning setting, unrelated to SOD visibility.", "src": "EIC Admin Guide"}, {"id": 156, "s": 4, "t": "mr", "q": "Which SOD-related global configurations enable evaluation for role requests? (Select all that apply)", "o": ["Evaluate SOD For Enterprise Roles", "Evaluate SOD For Emergency Access Role", "Evaluate SOD For Application Roles", "Evaluate SOD For Entitlement Types"], "a": [0, 1], "e": "Under Admin > Global Configurations > Role Request, only Enterprise Roles and Emergency Access Role have these toggles.", "src": "EIC Admin Guide"}, {"id": 163, "s": 5, "t": "mr", "q": "Which of the following are valid Saviynt campaign types? (Select all that apply)", "o": ["User Manager", "Service Account", "Entitlement Owner", "Role Owner"], "a": [0, 1, 2, 3], "e": "Also Organization Owner, Application Owner, Application Owner Metadata, and Self Certification (Beta, max 10k users).", "src": "EIC Admin Guide"}, {"id": 164, "s": 5, "t": "mc", "q": "Which campaign type is marked Beta and supports a maximum of 10,000 users?", "o": ["Self Certification", "Application Owner Metadata", "Organization Owner", "Service Account"], "a": [0], "e": "Self Certification is Beta with a 10k user cap.", "src": "EIC Admin Guide"}, {"id": 165, "s": 5, "t": "mc", "q": "Which roles are EXCLUDED from Role Owner campaign certifications?", "o": ["Roles in Active status", "Roles in Inactive or Composing status", "Enterprise roles", "Emergency access roles"], "a": [1], "e": "Roles in inactive or composing status are not included in Role Owner campaigns.", "src": "EIC Admin Guide"}, {"id": 166, "s": 5, "t": "mc", "q": "When a campaign is created, what data does it contain?", "o": ["A live view refreshed continuously", "A snapshot of the data available at the time of creation", "Only data changed since the last campaign", "Data pulled at lock time"], "a": [1], "e": "Snapshot behaviour is a classic exam gotcha - changes made after creation are not reflected in that campaign.", "src": "EIC Admin Guide"}, {"id": 167, "s": 5, "t": "mr", "q": "Which certification statuses exist? (Select all that apply)", "o": ["New", "In Progress", "Completed", "Locked"], "a": [0, 1, 2, 3], "e": "New (no action), In Progress, Completed, Locked (finalised - actions can no longer be modified).", "src": "EIC Admin Guide"}, {"id": 168, "s": 5, "t": "mc", "q": "When are revoke tasks created for revoked items in a certification?", "o": ["Immediately when the reviewer clicks revoke", "After the certification is LOCKED, if revoke tasks were configured during campaign creation", "When the campaign expires", "Only after WSRETRY runs"], "a": [1], "e": "Lock is the trigger, and only if revoke tasks were configured at campaign creation.", "src": "EIC Admin Guide"}, {"id": 169, "s": 5, "t": "mc", "q": "Which job expires a campaign based on its End Date (renamed in Release v23.7)?", "o": ["CAMPAIGNEXPIREDJOB (Expire campaign based on End Date)", "WSRETRYJOB", "RiskSODEvaluationJob", "DetectiveProvisioningRulesJob"], "a": [0], "e": "CAMPAIGNEXPIREDJOB. After expiry, certifiers can no longer act.", "src": "EIC Admin Guide"}, {"id": 170, "s": 5, "t": "mr", "q": "Which campaign launch modes are available? (Select all that apply)", "o": ["Create Now (Active mode)", "Preview (inactive, read-only, can be activated later)", "Schedule Later", "Retroactive launch"], "a": [0, 1, 2], "e": "Create Now, Preview, and Schedule Later (Minutes/Hourly/Daily/Weekly/Cron Expression).", "src": "EIC Admin Guide"}, {"id": 171, "s": 5, "t": "mc", "q": "Clicking Activate on a Preview campaign changes its status from Preview to:", "o": ["Completed", "InProcess", "Locked", "OverDue"], "a": [1], "e": "Preview -> InProcess. Campaigns can subsequently become OverDue, and Notify sends overdue notifications.", "src": "EIC Admin Guide"}, {"id": 172, "s": 5, "t": "mc", "q": "In a User Manager campaign, what does Step 1 cover?", "o": ["Access approval", "Employment verification", "Role ownership verification", "Revoke task creation"], "a": [1], "e": "Step 1 = Employment Verification, Step 2 = Access Approval. Selecting BASE_ACCOUNT plus Roles plus Entitlements produces the 2-step attestation.", "src": "EIC Admin Guide"}, {"id": 173, "s": 5, "t": "mr", "q": "Which Step 1 employment-status actions are available to a manager in a User Manager campaign? (Select all that apply)", "o": ["Works for me", "Does not work for me", "Terminated", "Decommission"], "a": [0, 1, 2], "e": "Decommission is an Entitlement Owner / Role Owner ownership-verification action, not a User Manager Step 1 action.", "src": "EIC Admin Guide"}, {"id": 174, "s": 5, "t": "mc", "q": "What does 'Enable Employment Verification Only' do in a User Manager campaign?", "o": ["Runs Step 2 only", "Launches with only Step 1, hides objects-to-be-included, and locks the campaign after employment verification", "Skips locking entirely", "Auto-certifies all users"], "a": [1], "e": "Only Step 1 runs; the certifier never gets access-verification options.", "src": "EIC Admin Guide"}, {"id": 175, "s": 5, "t": "mc", "q": "Which User Manager setting auto-certifies all users as 'works for me' by default?", "o": ["Include Users without Accounts", "Certify All Users by default", "Ignore Accounts without Entitlements", "Disable Condition Certify"], "a": [1], "e": "'Certify All Users by default' pre-marks Step 1 decisions.", "src": "EIC Admin Guide"}, {"id": 176, "s": 5, "t": "mc", "q": "Which Policy Setting provides a fallback certifier when the manager is inactive or unavailable at campaign launch?", "o": ["Default Certifier", "Default Reassignee User", "Secondary Manager", "Campaign Owner"], "a": [0], "e": "Default Certifier. It also receives items that have no owner, notably in 'Select All Certifier' cases.", "src": "EIC Admin Guide"}, {"id": 177, "s": 5, "t": "mc", "q": "Where are User Manager campaign global settings configured?", "o": ["Admin > Global Configuration > Campaign Config User Manager", "Admin > Identity Repository > Security System", "Admin > Workflow > Workflow List", "Admin > Settings > Dashboard Configuration"], "a": [0], "e": "Each campaign type has its own Campaign Config entry: Campaign Config User Manager, Campaign Config Entitlement Owner, Campaign Config Role Owner.", "src": "EIC Admin Guide"}, {"id": 178, "s": 5, "t": "mc", "q": "In an Entitlement Owner campaign, what rank values identify primary and secondary certifiers on CSV import?", "o": ["1 = primary, 2 = secondary", "26 = primary, 27 = secondary", "0 = primary, 1 = secondary", "10 = primary, 20 = secondary"], "a": [1], "e": "Rank 26 = primary certifier, rank 27 = secondary certifier.", "src": "EIC Admin Guide"}, {"id": 179, "s": 5, "t": "mc", "q": "If multiple owners share the SAME rank on one entitlement and an Entitlement Owner campaign launches, what happens?", "o": ["Duplicate certifications are created for each owner", "No certification is created", "The entitlement is associated to the owner with the LOWER user key; duplicates are not created", "The campaign fails to launch"], "a": [2], "e": "Duplicate certifications are not created; the lower user key wins.", "src": "EIC Admin Guide"}, {"id": 180, "s": 5, "t": "tf", "q": "A user can be both the primary certifier and a secondary certifier for the same entitlement.", "o": ["True", "False"], "a": [1], "e": "False. There can be multiple secondary certifiers but only one primary, and a user cannot hold both roles.", "src": "EIC Admin Guide"}, {"id": 181, "s": 5, "t": "mr", "q": "Which Decommission Action options exist for entitlement ownership verification? (Select all that apply)", "o": ["Decommission Entitlement (inactivate the entitlement)", "Decommission Entitlement and remove Entitlements from Accounts", "Delete Entitlement permanently", "Archive Entitlement"], "a": [0, 1], "e": "Two options only: inactivate, or inactivate AND remove from accounts.", "src": "EIC Admin Guide"}, {"id": 182, "s": 5, "t": "mr", "q": "Which actions are available during Entitlement Ownership Verification? (Select all that apply)", "o": ["Belongs to me", "Decommission", "Does not belong to me", "Consult"], "a": [0, 1, 2, 3], "e": "All four, with comments configurable per action. Role Owner ownership verification has the equivalent set.", "src": "EIC Admin Guide"}, {"id": 183, "s": 5, "t": "mr", "q": "Which values can 'Approval Type for Account / Entitlement' take? (Select all that apply)", "o": ["Approve", "Auto Approve", "Read Only", "Conditional"], "a": [0, 1, 2], "e": "Approve, Auto Approve, Read Only. This also controls the certifier's visibility during review and sign-off.", "src": "EIC Admin Guide"}, {"id": 184, "s": 5, "t": "mc", "q": "When 'Does not belong to me' triggers an ownership transfer, WHEN does the owner update actually occur?", "o": ["Immediately on selection", "After the certification/campaign is locked", "At campaign expiry", "Only after WSRETRY runs"], "a": [1], "e": "The update occurs after locking - a commonly tested timing detail.", "src": "EIC Admin Guide"}, {"id": 185, "s": 5, "t": "mr", "q": "How can a Role Owner campaign be launched for different certifiers? (Select all that apply)", "o": ["Role Keys", "Role Query", "From a list of certifiers", "By endpoint name"], "a": [0, 1, 2], "e": "Role Keys, Role Query, or from a certifier list. Advanced campaign configuration also supports a custom SQL query to filter which roles are included.", "src": "EIC Admin Guide"}, {"id": 186, "s": 5, "t": "mc", "q": "With 'Select From Manual Query' certifier selection, what happens if any certifier is inactive?", "o": ["The inactive certifier is skipped", "The campaign is not launched", "It falls back to the campaign owner", "The certification is auto-completed"], "a": [1], "e": "The campaign is not launched. 'Select Certifier from List' avoids this because it only shows active certifiers - which is also why Default Certifier does not apply to that option.", "src": "EIC Admin Guide"}, {"id": 187, "s": 5, "t": "mc", "q": "What does 'Show Consult for Own Access' control?", "o": ["Whether certifiers can consult someone else to review or certify their OWN access", "Whether consultees can see comments", "Whether reminders are sent", "Whether the campaign can be reconfigured"], "a": [0], "e": "Default behaviour discourages self-certification, so this setting governs the consult path for a certifier's own access.", "src": "EIC Admin Guide"}, {"id": 188, "s": 5, "t": "mc", "q": "What happens to step actions when a certification is REASSIGNED?", "o": ["They are preserved", "They reset to null", "They are auto-approved", "The certification is locked"], "a": [1], "e": "Reassignment changes the certifier, shows a reassignment message, records old/new certifier plus who reassigned in History, and resets step actions to null. Exports include an audit-trail column.", "src": "EIC Admin Guide"}, {"id": 189, "s": 5, "t": "mc", "q": "Reminder emails for a Role Owner campaign are sent when:", "o": ["Only if no actions have been taken", "Even if actions were taken, as long as the certifier has not locked/completed the campaign", "Only after the campaign expires", "Only to the campaign owner"], "a": [1], "e": "Taking actions does not stop reminders - locking/completing does.", "src": "EIC Admin Guide"}, {"id": 190, "s": 5, "t": "mc", "q": "When a campaign is reconfigured, what does Saviynt create?", "o": ["A new version of the same campaign", "A new campaign with the suffix '- Reconfigure'", "A cloned certification only", "Nothing, it edits in place"], "a": [1], "e": "A new campaign suffixed '- Reconfigure', and you must set Enable New Config = Yes.", "src": "EIC Admin Guide"}, {"id": 191, "s": 5, "t": "mr", "q": "Using Edit on an existing campaign, which fields can a campaign owner update? (Select all that apply)", "o": ["Campaign End date", "Reminder Email Templates", "Reminder Interval", "The certifiers"], "a": [0, 1, 2], "e": "Certifiers CANNOT be changed by reconfiguring. Updating the campaign end date also updates the end date for all its certifications.", "src": "EIC Admin Guide"}, {"id": 192, "s": 5, "t": "mc", "q": "From release v23.11, what is mandatory when discontinuing a certification?", "o": ["Campaign owner approval", "A comment", "A revoke task", "A new end date"], "a": [1], "e": "A comment is mandatory from v23.11. You also cannot discontinue a campaign while it is in Launching state.", "src": "EIC Admin Guide"}, {"id": 193, "s": 5, "t": "mc", "q": "In campaign entitlement queries, what does risk level 5 represent?", "o": ["Very low", "Medium", "High-risk", "Undefined"], "a": [2], "e": "Risk levels run 1 (very low) through 5 (high-risk), e.g. ev.status=2 and ev.risk=5.", "src": "EIC Admin Guide"}, {"id": 194, "s": 5, "t": "mc", "q": "In campaign scoping, what does 'Indirectly' assigned access mean?", "o": ["Access granted via ARS", "Child entitlements inherited from a parent entitlement", "Access granted by a Technical Rule", "Access granted by a role"], "a": [1], "e": "Directly = via UUR / Technical Rule / ARS / Role. Indirectly = child entitlements inherited from a parent. 'Both' includes each.", "src": "EIC Admin Guide"}, {"id": 195, "s": 5, "t": "mc", "q": "Smart Filters are available in which certification step, and for which campaign types?", "o": ["Step 1, all campaign types", "Step 2, for User Manager / Service Account / Application Owner / Entitlement Owner", "Step 2, for secondary certifiers only", "Step 1, for delegates only"], "a": [1], "e": "Step 2 only, and NOT for secondary certifiers, delegates, or consultees. They exist to reduce certification fatigue.", "src": "EIC Admin Guide"}, {"id": 196, "s": 5, "t": "mc", "q": "A Tiered Campaign pattern runs a User Manager certification first, then a follow-up Entitlement Owner certification. Why?", "o": ["To reduce licensing cost", "So the entitlement owner can see and override manager decisions on high-risk access", "To avoid snapshot issues", "To bypass revoke tasks"], "a": [1], "e": "Tiered campaigns give high-risk access a second, owner-level review, and you can filter what flows into the second campaign (approved / rejected / both).", "src": "EIC Admin Guide"}, {"id": 197, "s": 5, "t": "mc", "q": "What does 'Ignore Accounts without Entitlements = Yes' do in Step 2?", "o": ["Includes accounts and app roles that have no entitlements", "Excludes accounts and app roles that have no entitlements", "Auto-revokes empty accounts", "Creates a revoke task"], "a": [1], "e": "Yes excludes them from the review; No includes them.", "src": "EIC Admin Guide"}, {"id": 198, "s": 5, "t": "mr", "q": "Which pre/post-launch validation checks does Saviynt surface for campaigns? (Select all that apply)", "o": ["Missing emails", "Missing managers", "Inactive managers", "Expired mitigating controls"], "a": [0, 1, 2], "e": "Missing emails, missing managers and inactive managers are certification data-readiness checks. Expired MCs belong to SOD.", "src": "EIC Admin Guide"}, {"id": 199, "s": 5, "t": "mc", "q": "In what format do campaign and certification data exports download?", "o": ["CSV", "Excel", "PDF", "JSON"], "a": [1], "e": "Excel, and exports include an audit trail column. Campaign owners can export a whole campaign; certifiers can export their individual certifications.", "src": "EIC Admin Guide"}, {"id": 203, "s": 6, "t": "mr", "q": "Which two analytic control types are explicitly named in the official blueprint? (Select all that apply)", "o": ["Elastic Controls", "Non-Elastic Controls", "Preventative Controls", "Detective Controls"], "a": [0, 1], "e": "Objective 6:2 lists Elastic and Non-Elastic. Elastic = Version 2 (Elasticsearch-backed); Non-Elastic = Version 1 (SQL/direct DB).", "src": "SCIP Exam Preparation Guide"}, {"id": 204, "s": 6, "t": "mc", "q": "In the Analytics Configuration List, Version 1 controls are also referred to as:", "o": ["Elastic controls", "Non-elastic controls", "Runtime-only controls", "Data Query controls"], "a": [1], "e": "Version 1 tab = V1 / Non-elastic. Version 2 / Elastic tab = Elasticsearch-based controls.", "src": "EIC Admin Guide"}, {"id": 205, "s": 6, "t": "mr", "q": "Which methods can be used to create a Version 1 (non-elastic) analytics control? (Select all that apply)", "o": ["Using SQL query", "Runtime Analytics", "Custom Analytics Control", "Using Elasticsearch Query"], "a": [0, 1, 2], "e": "ES Query controls live on the Elastic (V2) tab, not V1.", "src": "EIC Admin Guide"}, {"id": 206, "s": 6, "t": "mc", "q": "Actionable reports can only be created for which analytic control types?", "o": ["Elasticsearch query and Data Query", "SQL query and Custom based controls", "Runtime and Elastic controls", "All control types"], "a": [1], "e": "Only SQL query and Custom based analytic controls support Allowed Actions.", "src": "EIC Admin Guide"}, {"id": 208, "s": 6, "t": "mc", "q": "What does Preview validate when creating an analytics control?", "o": ["Both SQL syntax and mandatory columns for Allowed Actions", "SQL syntax and up to the first 10 rows, but NOT mandatory columns for Allowed Action", "Only the Elasticsearch index", "Nothing, it just runs the control"], "a": [1], "e": "Preview = syntax + max 10 rows. Create/Submit is the final validation that checks the mandatory columns required for an Allowed Action. Preview is unavailable once the control is created.", "src": "EIC Admin Guide"}, {"id": 209, "s": 6, "t": "mc", "q": "What is the difference between Dry Run and Run Now?", "o": ["Dry Run stores results in run history; Run Now does not", "Dry Run is a test run whose results are NOT stored; Run Now stores results in run history", "They are identical", "Dry Run only works on Elastic controls"], "a": [1], "e": "Dry Run = test, nothing stored. Run Now = stored in run history, and Run History lets you compare runs.", "src": "EIC Admin Guide"}, {"id": 210, "s": 6, "t": "mr", "q": "Which delivery options exist for analytics results? (Select all that apply)", "o": ["Send Email As Attachment", "Save Data (to Elasticsearch)", "Save To File (server path, .zip)", "Publish to the ARS catalog"], "a": [0, 1, 2], "e": "Email attachment is .xlsx; Save Data writes to Elasticsearch; Save To File writes a .zip to /saviynt/Code/reports/Archive/Analytics/.", "src": "EIC Admin Guide"}, {"id": 211, "s": 6, "t": "mc", "q": "When does the Base Count setting apply?", "o": ["Always", "Only when Save Data is selected", "Only for runtime controls", "Only for dashboards"], "a": [1], "e": "Base Count applies ONLY with Save Data. With Send Email As Attachment or Save To File alone, each run returns full data. From v23.1 Base Count must be <= Number of History to Keep.", "src": "EIC Admin Guide"}, {"id": 212, "s": 6, "t": "mc", "q": "What is the default value of analyticsindexbatchcount if not set?", "o": ["500", "1000", "7500", "25000000"], "a": [2], "e": "7500 is the default batch size for saving records to Elasticsearch. 25000000 is the default Elasticsearch index request size.", "src": "EIC Admin Guide"}, {"id": 213, "s": 6, "t": "mc", "q": "For Runtime Analytics used with an Entitlement Update Rule, what must Executable Type be set to?", "o": ["Executable", "Preventative", "Detective", "Elastic"], "a": [1], "e": "Preventative, on a NON-Elasticsearch runtime control. Use Executable Type = Executable when you only want to display runtime data.", "src": "EIC Admin Guide"}, {"id": 214, "s": 6, "t": "mr", "q": "Which control context types apply to Elasticsearch-based controls? (Select all that apply)", "o": ["User Context", "Organization Context", "Endpoint Context", "Role Context"], "a": [0, 1], "e": "Two: User Context and Organization Context. If filtering ES data on USERCONTEXT, your JSON must include a column named USERCONTEXT.", "src": "EIC Admin Guide"}, {"id": 215, "s": 6, "t": "mc", "q": "In an Elastic SQL query control, 'status' and 'comments' columns are restricted. What is the documented workaround?", "o": ["Drop the columns entirely", "Use an alias, e.g. select status as accountstatus", "Convert them to numbers", "Move them to a Data Query control"], "a": [1], "e": "Alias them (select status as accountstatus, select comments as acccomments) to avoid duplicate-column issues.", "src": "EIC Admin Guide"}, {"id": 216, "s": 6, "t": "mc", "q": "What is a Data Query control?", "o": ["A SQL query against the primary database", "A JSON query run against an existing Elasticsearch index to return a subset, stored as a DIFFERENT index", "A dashboard tile", "A runtime control"], "a": [1], "e": "Data Query filters data already in Elasticsearch using a JSON query; results are stored as a separate ES index.", "src": "EIC Admin Guide"}, {"id": 217, "s": 6, "t": "mc", "q": "Which dashboard type does Saviynt RECOMMEND, and why?", "o": ["Non-Elasticsearch, because it is always real-time", "Elasticsearch-based, because of faster response time and faster refresh", "Tile only, because it is simplest", "Gauge charts, because they render fastest"], "a": [1], "e": "ES dashboards return data from Elasticsearch and refresh faster. Non-ES dashboards query on the fly - real-time but slower.", "src": "EIC Admin Guide"}, {"id": 218, "s": 6, "t": "mc", "q": "What must exist before you can create an Elasticsearch-based dashboard?", "o": ["An analytics control that is created, scheduled to update, and whose analytics id you note from the URL", "A campaign", "A workflow", "A ruleset"], "a": [0], "e": "Create the analytics control, schedule it, then use its analytics id (found at the end of the URL) when creating the dashboard.", "src": "EIC Admin Guide"}, {"id": 219, "s": 6, "t": "mc", "q": "How are dashboards enabled per module for a user?", "o": ["Through the endpoint configuration", "Through the SAV Role (ADMIN > SAV Roles > select role > Dashboards)", "Through Global Configuration > Request", "Through the Job Control Panel"], "a": [1], "e": "Module dashboards are assigned through the SAV Role. Assignable modules include ARS, SOD, Role, Analytics, Attestation, AWS, BOX, GAPPS, AZURE, Identity Repository - Admin, AZURE AD, OFFICE365.", "src": "EIC Admin Guide"}, {"id": 220, "s": 6, "t": "mc", "q": "A user with SELECTIVE endpoint access on their SAV Role reloads the browser to refresh a dashboard. What happens?", "o": ["The dashboard refreshes normally", "The dashboard does NOT refresh via browser reload", "The dashboard resets to default", "The user is logged out"], "a": [1], "e": "Browser reload refreshes only if the SAV role has access to ALL endpoints. Otherwise use the RELOAD control on each tile, or schedule the Dashboard Refresh Job.", "src": "EIC Admin Guide"}, {"id": 221, "s": 6, "t": "mr", "q": "Which prepackaged analytics report modules does Saviynt ship out of the box? (Select all that apply)", "o": ["Access Requests", "Certification", "SOD", "Identity Warehouse / Audit and Monitoring"], "a": [0, 1, 2, 3], "e": "Prepackaged report queries ship with releases, are Elasticsearch-based, and can be modified for custom requirements.", "src": "EIC Admin Guide"}, {"id": 222, "s": 6, "t": "mc", "q": "An end user has a read-only SAV role and opens an actionable report. What can they do?", "o": ["View data and take actions", "View data but NOT take actions", "Neither view nor act", "Take actions but not view data"], "a": [1], "e": "Read-only SAV role = view only. Report access can be restricted per SAV role under Admin > SAV Role > Analytics tab > Add New Analytics.", "src": "EIC Admin Guide"}, {"id": 225, "s": 6, "t": "mr", "q": "In which formats can Elastic (Version 2) analytics configurations be exported? (Select all that apply)", "o": ["CSV", "EXCEL", "JSON", "XML"], "a": [0, 1, 2], "e": "CSV, EXCEL and JSON from the Analytics Configuration List Elastic tab.", "src": "EIC Admin Guide"}], "cards": [{"id": 1, "s": 1, "f": "Security System", "b": "Governance CONTAINER. Groups endpoints that share the same connection and workflows. Created FIRST."}, {"id": 2, "s": 1, "f": "Endpoint", "b": "The actual TARGET APPLICATION instance inside EIC. Accounts + entitlements import here. Created SECOND."}, {"id": 3, "s": 1, "f": "Connection", "b": "The integration CONFIGURATION - how EIC talks to the target. Created THIRD. Not needed for disconnected apps."}, {"id": 4, "s": 1, "f": "Application = ?", "b": "Security System + Endpoint + Connection."}, {"id": 5, "s": 1, "f": "Order of classic onboarding", "b": "Security System -> Endpoint -> Connection."}, {"id": 6, "s": 1, "f": "User vs Account vs Entitlement", "b": "User = the person record. Account = digital identity IN an app, mapped to a user. Entitlement = privilege IN an app, mapped to an account."}, {"id": 7, "s": 1, "f": "Orphan account", "b": "An imported account that correlates to no user. Prevent by defining the User-Account Correlation Rule BEFORE importing accounts."}, {"id": 8, "s": 1, "f": "User-Account Correlation Rule path", "b": "ADMIN > Identity Repository > Security Systems > Endpoint > User Account Correlation Rule."}, {"id": 9, "s": 1, "f": "UserImportJob path", "b": "ADMIN > Job Control Panel > DATA > User Import via a Connection (UserImportJob)."}, {"id": 10, "s": 1, "f": "Full vs Incremental import", "b": "Full = first import / import all (also needed to change Allow User Operation). Incremental = only added/modified/deleted since the first import."}, {"id": 11, "s": 1, "f": "User Not in Feed Action options", "b": "No Action | In-Activate (can terminate + create Revoke Access task) | InactivateUserOnly (inactive, never terminates)."}, {"id": 12, "s": 1, "f": "Default user import batch size", "b": "500 (job.ecm.userimport.batchsize). USERTHRESHOLD default = 1000."}, {"id": 13, "s": 1, "f": "Bulk User Upload limits", "b": "Max CSV 10 MB. SAV role needs 'Upload User' privilege. Map ALL columns, then Upload and Preview, then Import Now."}, {"id": 14, "s": 1, "f": "UI role types (4)", "b": "Emergency Access, Enterprise, Application, Entitlement."}, {"id": 15, "s": 1, "f": "CSV ROLETYPE integers (6)", "b": "ENABLER=1, TRANSACTIONAL=2, FIREFIGHTER=3, ENTERPRISE=4, APPLICATION=5, ENTITLEMENTBASEDROLE=6. STATUS 1=active, 0=inactive."}, {"id": 16, "s": 1, "f": "DB role import order", "b": "Entitlements -> Roles -> Role Owners."}, {"id": 17, "s": 1, "f": "SAV Role", "b": "Internal ADMIN capability model: what a user can see/do in EIC (Feature Access + Web Service Access). NOT requestable business access."}, {"id": 18, "s": 1, "f": "SAV Role naming rules", "b": "Must start with ROLE_, uppercase only. No spaces, no commas, no underscore after ROLE_SAV."}, {"id": 19, "s": 1, "f": "OOTB SAV Role restrictions", "b": "Cannot update, delete, or change feature/web-service access. Clone it (Create Sav Role > Copy Existing) instead."}, {"id": 20, "s": 1, "f": "What does cloning a SAV Role NOT copy?", "b": "Users. Feature Access and Web Service Access ARE copied."}, {"id": 21, "s": 1, "f": "ROLE_ADMIN", "b": "Full-access admin SAV role; can reach all REST endpoints without adding individual web service access."}, {"id": 22, "s": 1, "f": "Baselining", "b": "Detects rogue / out-of-band accounts managed outside Saviynt. Re-Baseline handles incremental change (e.g. M&A)."}, {"id": 23, "s": 1, "f": "Onboarding vs Enrollment", "b": "Same thing - used interchangeably in Saviynt docs and UI."}, {"id": 24, "s": 1, "f": "3 jobs after disconnected app enrollment", "b": "applicationonboarding_account, applicationonboarding_entitlement, applicationonboarding_entitlementassociation."}, {"id": 25, "s": 1, "f": "Commit Changes", "b": "Without it, a newly enrolled application configuration stays in DRAFT mode."}, {"id": 26, "s": 1, "f": "EIC API auth", "b": "OAuth 2.0, access token passed as a Bearer token. Generate: Admin > Settings > Webservice Auth Configuration > Generate Token."}, {"id": 27, "s": 1, "f": "Step-up authentication trap", "b": "Supported for an already-logged-in user changing password via Profile menu (Email OTP / SMS OTP / KBA). NOT supported during the login process when EIC is the auth source."}, {"id": 28, "s": 1, "f": "iBot (Identity BOT)", "b": "Integrates EIC with applications that do NOT expose integration APIs."}, {"id": 29, "s": 1, "f": "Saviynt Connect 2.0", "b": "Custom SSL-based connectivity to both on-premise AND on-cloud target systems."}, {"id": 30, "s": 1, "f": "EIC deployment model", "b": "Cloud/SaaS. NOT a full on-prem deployment."}, {"id": 31, "s": 2, "f": "How do you make an application requestable?", "b": "Add the Access Add / Access Remove WORKFLOW on the Security System. Without it the app does not appear on the request screen at all."}, {"id": 32, "s": 2, "f": "Where is the 'Requestable' flag?", "b": "On the ENDPOINT detail page (enabled by default). Access Query can further restrict who may request it."}, {"id": 33, "s": 2, "f": "4 parts of every access request", "b": "Requester, Beneficiary, Application (Endpoint), Approvers."}, {"id": 34, "s": 2, "f": "Workflow types", "b": "Parallel (simultaneous) and Serial (sequential)."}, {"id": 35, "s": 2, "f": "Workflow name rules", "b": "No periods, no blank spaces, must be unique."}, {"id": 36, "s": 2, "f": "Workflow status flow", "b": "Save -> Pending Approval. Approve -> Active. Reject -> Inactive. Discontinue -> Composing. Only ACTIVE workflows can be associated."}, {"id": 37, "s": 2, "f": "Editing an Active workflow", "b": "Creates a NEW version in composing; the old version becomes inactive. Only one version active at a time."}, {"id": 38, "s": 2, "f": "XML workflow gotcha", "b": "The workflow name and the process name inside the XML must match."}, {"id": 39, "s": 2, "f": "Enterprise role request prerequisite", "b": "The user must already have an ACCOUNT in some application."}, {"id": 40, "s": 2, "f": "Where are role request workflows configured?", "b": "Admin > Global Configuration > Role Request (Roles Add Workflow / Roles Remove Workflow). App workflows live on the Security System - do not confuse them."}, {"id": 41, "s": 2, "f": "'Whom to Request' vs 'For Whom Can the Role User Approve'", "b": "First = who you can REQUEST for. Second = whose requests you can APPROVE. Both are SAV Role settings."}, {"id": 42, "s": 2, "f": "ARS catalog search technology", "b": "Elasticsearch. After catalog changes, run the endpoint sync job."}, {"id": 43, "s": 2, "f": "Multi-user request limitations", "b": "No copy access, no modify status/state, no update end date, no cascading privileges, no endpoint mapping, no modifying existing access, no application collections."}, {"id": 44, "s": 2, "f": "What does approval create?", "b": "A provisioning TASK. Approval alone changes nothing in the target application."}, {"id": 45, "s": 2, "f": "WSRETRYJOB", "b": "Provisioning Job. Provisions/de-provisions in the target AND auto-completes the tasks. From v23.1: multi-trigger mode only."}, {"id": 46, "s": 2, "f": "Pending vs Completed task statuses", "b": "Pending: New, In Progress, Failed. Completed: Completed, Discontinued, No Action Required, Error."}, {"id": 47, "s": 2, "f": "3 provisioning modes", "b": "Manual, Automated (needs Automated Provisioning + WSRETRY scheduled), Instant (needs Automated AND Instant enabled)."}, {"id": 48, "s": 2, "f": "WSBlockingRetryJob", "b": "Single Instance Provisioning Job - single-threaded, waits for provisioning to finish before the next WSRETRY instance."}, {"id": 49, "s": 2, "f": "Provisioning Threshold", "b": "Safety guardrail - limits processing if the task count exceeds the threshold."}, {"id": 50, "s": 2, "f": "Create Task Action", "b": "Controls whether tasks are created for account + entitlements, or entitlements only (account created after entitlement approval)."}, {"id": 51, "s": 2, "f": "Modifying a request in-flight", "b": "The existing request is DISCONTINUED and a NEW request is created."}, {"id": 52, "s": 2, "f": "Manager raises request for own direct report", "b": "That manager-approval level is AUTO-APPROVED (approver = requester)."}, {"id": 53, "s": 2, "f": "Delegates", "b": "Set up FUTURE delegates only - delegation applies going forward."}, {"id": 54, "s": 2, "f": "Where do tasks come from?", "b": "Approved ARS requests, API requests, campaigns, analytics actionable reports, and SOD violations."}, {"id": 55, "s": 2, "f": "Request History", "b": "Where users track status and (if configured) discontinue / modify / recreate a request."}, {"id": 56, "s": 2, "f": "Application Collection", "b": "A saved set of selected access items requested together; part of the consolidated catalog alongside apps and enterprise roles."}, {"id": 57, "s": 3, "f": "Technical Rule", "b": "BIRTHRIGHT access. Strongest word-association in the domain."}, {"id": 58, "s": 3, "f": "User Update Rule", "b": "Fires on identity CHANGE - mover and leaver logic."}, {"id": 59, "s": 3, "f": "Request Rule", "b": "Evaluated during access requests (single, multi, bulk-upload)."}, {"id": 60, "s": 3, "f": "Scan Rule", "b": "Data Access Governance - classify PCI/PII, then Quarantine / Access lockdown / alert security."}, {"id": 61, "s": 3, "f": "Entitlement Update Rule", "b": "Fires when an entitlement property changes. Pairs with a NON-elastic runtime analytics control of Executable Type = Preventative."}, {"id": 62, "s": 3, "f": "EVENTSOURCE values", "b": "1=created UI, 2=created Import, 3=created API, 4=updated UI, 5=updated Import, 6=updated API, 7=removed via One Click Disable."}, {"id": 63, "s": 3, "f": "INVOKEBYDETECTIVEJOB", "b": "If True, the rule is picked up by the Detective Provisioning Job. Stored in the hanarule table alongside EVENTSOURCE."}, {"id": 64, "s": 3, "f": "DetectiveProvisioningRulesJob", "b": "Run Detective Rules and Take Action. Evaluates rules for EXISTING users and CREATES tasks. WSRETRY then provisions them."}, {"id": 65, "s": 3, "f": "Remove Birthright Access if condition fails", "b": "Revokes ONLY rule-granted access (tracked by AssignedfromRule). Does NOT remove ARS-granted access. The account is retained."}, {"id": 66, "s": 3, "f": "Basic-config condition gotcha", "b": "The LAST condition must be AND."}, {"id": 67, "s": 3, "f": "Advanced query gotcha", "b": "User attributes in advanced queries are CASE-SENSITIVE."}, {"id": 68, "s": 3, "f": "'Is Updated' gotcha", "b": "Must NOT be configured on rules you want processed by DetectiveProvisioningRulesJob."}, {"id": 69, "s": 3, "f": "Execution Trail", "b": "The audit/troubleshooting page for rules. Requires logexecutiontrail and enableexecutiontrail in externalconfig.properties."}, {"id": 70, "s": 3, "f": "Preview (Technical Rule)", "b": "Shows impacted users BEFORE saving / sending for approval."}, {"id": 71, "s": 3, "f": "Rule Add Workflow location", "b": "Global Config > Identity Access Rules > Rule Add Workflow. Send for Approval creates a Request ID."}, {"id": 72, "s": 3, "f": "Evaluate Manager Hierarchy", "b": "Only visible after enabling Detective. Performance intensive - can delay rule execution."}, {"id": 73, "s": 3, "f": "Primary Account Type", "b": "Endpoint setting. If set, Technical Rule Add Access tasks are created only for that account type; if unset, for all active/manually-provisioned accounts."}, {"id": 74, "s": 3, "f": "Transfer Ownership", "b": "User Update Rule action. Moves identity objects to the user in 'Owner on Terminate' (typical condition: userstatuskey is 0)."}, {"id": 75, "s": 3, "f": "Execute On (leaver timing)", "b": "Empty = execute on the trigger day. A value like 30 defers, e.g. remove access Day 0, remove account Day 30."}, {"id": 76, "s": 3, "f": "One Click Disable limitation", "b": "Only a limited action set: Create Update User Task, Deprovision Role, Discontinue Pending Task, Notify Email, Re-run provisioning rules, Re-run selected technical rules, Transfer Ownership."}, {"id": 77, "s": 3, "f": "MicroServices effect on Policies", "b": "The Policies menu collapses into a single 'Provisioning Rules' page."}, {"id": 78, "s": 4, "f": "Function", "b": "Logical GROUPING of entitlements = a business ability. The building block."}, {"id": 79, "s": 4, "f": "Risk", "b": "The TOXIC COMBINATION. Built from 1 to 5 functions. Can map to a business process area."}, {"id": 80, "s": 4, "f": "Ruleset", "b": "A set of RISKS. Primary objects = risks + functions. Secondary objects = entitlement types + values."}, {"id": 81, "s": 4, "f": "SoD function operators", "b": "AND, OR, NOT."}, {"id": 82, "s": 4, "f": "Risk Type: SOD vs Critical Access", "b": "SOD = multi-function conflict, appears in the violation workbench. Critical Access = SINGLE function, restriction/critical-access monitoring."}, {"id": 83, "s": 4, "f": "Ruleset types", "b": "Non-SAP (entitlements), SAP (Tcodes), Logical (across multiple SAP systems)."}, {"id": 84, "s": 4, "f": "Preventative SoD", "b": "Conflict analysis at ACCESS REQUEST time - before access is granted."}, {"id": 85, "s": 4, "f": "Detective SoD", "b": "Conflict analysis on access that ALREADY EXISTS."}, {"id": 86, "s": 4, "f": "RiskSODEvaluationJob", "b": "The detective SOD Evaluation job. ADMIN > Job Control Panel > SOD. Only ONE instance can run at a time."}, {"id": 87, "s": 4, "f": "SODDetailJob vs MitigatingControlImportJob", "b": "SODDetailJob IMPORTS violations. MitigatingControlImportJob imports mitigating controls."}, {"id": 88, "s": 4, "f": "Evaluate SODs during access request", "b": "Ruleset-level toggle that turns on preventative evaluation."}, {"id": 89, "s": 4, "f": "sod.entitlement.depthForPreventativeSODEval", "b": "Default 2. If preventative depth < detective depth, some risks only appear later in the detective workbench."}, {"id": 90, "s": 4, "f": "SOD workbench statuses", "b": "Open, In Process, Risk Accepted, Closed, Remediated."}, {"id": 91, "s": 4, "f": "Remediate vs Accept", "b": "REMEDIATE = remove the conflicting entitlement. ACCEPT = apply a Mitigating Control -> status becomes Risk Accepted."}, {"id": 92, "s": 4, "f": "Mitigating Control", "b": "A compensating control documenting an accepted exception. Cannot apply an EXPIRED MC."}, {"id": 93, "s": 4, "f": "MC Priority values", "b": "Low, Medium, High, Critical."}, {"id": 94, "s": 4, "f": "MC Status that blocks use", "b": "Inactive. (Avoid Composing / Sent for approval / Decommissioned - not currently used.)"}, {"id": 95, "s": 4, "f": "Pre-mitigated vs Recommended associations", "b": "Pre-mitigated = AUTO-mitigates for a defined window, in both preventative and detective. Recommended = merely suggests MCs to the owner."}, {"id": 96, "s": 4, "f": "Remediate options outcome", "b": "No Action -> Remediated. Create Request -> Remediated. Create Task -> CLOSED."}, {"id": 97, "s": 4, "f": "VIEW IMPACT", "b": "Shows violations remediated + users impacted BEFORE you remediate."}, {"id": 98, "s": 4, "f": "SOD reports", "b": "L1 Summary, L2 Detailed, L3 Permission. L1 > 500 records or L2/L3 > 50,000 records triggers a background job (My Downloads from v23.8)."}, {"id": 99, "s": 4, "f": "ENABLE_EXTERNAL_SOD_EVAL", "b": "Configuration-table key set to 1 to activate external SoD evaluation."}, {"id": 100, "s": 4, "f": "Who can manage functions/risks?", "b": "Only the function owner; only the risk owner. ROLE_ADMIN sees all risks in the workbench."}, {"id": 101, "s": 5, "f": "Campaign", "b": "A container grouping similar CERTIFICATIONS so they launch and are monitored together."}, {"id": 102, "s": 5, "f": "Campaign types", "b": "User Manager, Service Account, Entitlement Owner, Role Owner, Organization Owner, Application Owner, Application Owner Metadata, Self Certification (Beta, 10k cap)."}, {"id": 103, "s": 5, "f": "Snapshot gotcha", "b": "A campaign holds a SNAPSHOT of the data at creation time. Later changes are not reflected."}, {"id": 104, "s": 5, "f": "Certification statuses", "b": "New -> In Progress -> Completed -> Locked. After locking, actions cannot be modified."}, {"id": 105, "s": 5, "f": "When are revoke tasks created?", "b": "After the certification is LOCKED, and only if revoke tasks were configured at campaign creation."}, {"id": 106, "s": 5, "f": "CAMPAIGNEXPIREDJOB", "b": "Expire campaign based on End Date (renamed in v23.7). After expiry, no actions can be performed."}, {"id": 107, "s": 5, "f": "Launch modes", "b": "Create Now (Active), Preview (inactive/read-only, activate later), Schedule Later."}, {"id": 108, "s": 5, "f": "Preview -> Activate", "b": "Status changes Preview -> InProcess."}, {"id": 109, "s": 5, "f": "User Manager campaign: Step 1 / Step 2", "b": "Step 1 = Employment Verification. Step 2 = Access Approval."}, {"id": 110, "s": 5, "f": "Step 1 actions", "b": "Works for me | Does not work for me | Terminated."}, {"id": 111, "s": 5, "f": "Enable Employment Verification Only", "b": "Launches Step 1 ONLY, hides objects-to-be-included, locks after employment verification."}, {"id": 112, "s": 5, "f": "Default Certifier", "b": "Fallback when the original certifier is inactive/absent at launch, and for items with no owner. Does NOT apply to 'Select Certifier from List'."}, {"id": 113, "s": 5, "f": "Entitlement Owner certifier ranks", "b": "Rank 26 = primary, rank 27 = secondary. One primary only; a user cannot be both."}, {"id": 114, "s": 5, "f": "No primary certifier =", "b": "The campaign is NOT launched."}, {"id": 115, "s": 5, "f": "Same rank on one entitlement", "b": "No duplicate certifications - the owner with the LOWER user key wins."}, {"id": 116, "s": 5, "f": "Decommission Action options", "b": "Decommission Entitlement (inactivate) OR Decommission Entitlement and remove Entitlements from Accounts."}, {"id": 117, "s": 5, "f": "Ownership verification actions", "b": "Belongs to me | Decommission | Does not belong to me | Consult."}, {"id": 118, "s": 5, "f": "Approval Type values", "b": "Approve | Auto Approve | Read Only."}, {"id": 119, "s": 5, "f": "Ownership transfer timing", "b": "'Does not belong to me' updates the owner only AFTER the certification/campaign is locked."}, {"id": 120, "s": 5, "f": "Role Owner campaign exclusions", "b": "Roles in INACTIVE or COMPOSING status are not included."}, {"id": 121, "s": 5, "f": "Select From Manual Query risk", "b": "If ANY certifier is inactive, the campaign is not launched."}, {"id": 122, "s": 5, "f": "Reassignment effects", "b": "Certifier changes, message shown, History records old/new certifier + who reassigned, and STEP ACTIONS RESET TO NULL."}, {"id": 123, "s": 5, "f": "Reminder emails", "b": "Still sent even if actions were taken, as long as the certifier has not locked/completed."}, {"id": 124, "s": 5, "f": "Reconfigure a campaign", "b": "Creates a NEW campaign suffixed '- Reconfigure'; set Enable New Config = Yes. Certifiers CANNOT be changed."}, {"id": 125, "s": 5, "f": "Discontinue rules", "b": "From v23.11 a comment is mandatory. Cannot discontinue while in Launching state."}, {"id": 126, "s": 5, "f": "Direct vs Indirect access", "b": "Direct = via UUR / Technical Rule / ARS / Role. Indirect = child entitlements inherited from a parent."}, {"id": 127, "s": 5, "f": "Risk levels in campaign queries", "b": "1 = very low ... 5 = high-risk."}, {"id": 128, "s": 5, "f": "Smart Filters", "b": "Step 2 only. Available to User Manager / Service Account / Application Owner / Entitlement Owner. NOT for secondary certifiers, delegates, consultees."}, {"id": 129, "s": 5, "f": "Tiered Campaign", "b": "User Manager cert first, then Entitlement Owner cert where the owner can override manager decisions on high-risk access."}, {"id": 130, "s": 5, "f": "Export format", "b": "Excel, including an audit trail column."}, {"id": 131, "s": 6, "f": "Elastic vs Non-Elastic controls", "b": "Elastic = Version 2, Elasticsearch-backed. Non-Elastic = Version 1, SQL / direct DB."}, {"id": 132, "s": 6, "f": "ES-based SQL query purpose", "b": "Run SQL against the DB and STORE the results into an Elasticsearch index. Everything ES-based is built on top of that."}, {"id": 133, "s": 6, "f": "V1 creation methods", "b": "Using SQL query, Runtime Analytics, Custom Analytics Control."}, {"id": 134, "s": 6, "f": "Actionable reports", "b": "Only for SQL query and CUSTOM based controls. 'Allowed Action' pre-selects the actions."}, {"id": 135, "s": 6, "f": "Actionable analytics on an orphan account", "b": "Creates a Remove Account TASK in ARS - not a request, and nothing is removed instantly."}, {"id": 136, "s": 6, "f": "Preview vs Create", "b": "Preview = SQL syntax + first 10 rows, does NOT validate Allowed Action columns. Create = final validation. Preview is gone once created."}, {"id": 137, "s": 6, "f": "Dry Run vs Run Now", "b": "Dry Run = test, results NOT stored. Run Now = stored in run history."}, {"id": 138, "s": 6, "f": "Delivery options", "b": "Send Email As Attachment (.xlsx) | Save Data (Elasticsearch) | Save To File (.zip at /saviynt/Code/reports/Archive/Analytics/)."}, {"id": 139, "s": 6, "f": "Base Count rule", "b": "Applies ONLY when Save Data is selected. From v23.1 must be <= Number of History to Keep."}, {"id": 140, "s": 6, "f": "analyticsindexbatchcount", "b": "Default 7500. Elasticsearch index request size default 25000000."}, {"id": 141, "s": 6, "f": "Runtime control for Entitlement Update Rules", "b": "Non-Elasticsearch runtime control with Executable Type = Preventative. Use Executable to just display runtime data."}, {"id": 142, "s": 6, "f": "ES control context types", "b": "User Context and Organization Context. Filtering on USERCONTEXT requires a USERCONTEXT column in the JSON."}, {"id": 143, "s": 6, "f": "status/comments column workaround", "b": "Alias them: select status as accountstatus, select comments as acccomments."}, {"id": 144, "s": 6, "f": "Data Query control", "b": "JSON query against an EXISTING ES index; results stored as a DIFFERENT index."}, {"id": 145, "s": 6, "f": "Recommended dashboard type", "b": "Elasticsearch-based - faster response and refresh. Non-ES queries run on the fly but are slower."}, {"id": 146, "s": 6, "f": "ES dashboard prerequisite", "b": "Create the analytics control, schedule it, and note the analytics id from the end of the URL."}, {"id": 147, "s": 6, "f": "Dashboard assignment", "b": "Per module, through the SAV Role: ADMIN > SAV Roles > select role > Dashboards."}, {"id": 148, "s": 6, "f": "Dashboard refresh trap", "b": "Browser reload refreshes only if the SAV role has access to ALL endpoints. Otherwise use RELOAD per tile or the Dashboard Refresh Job."}, {"id": 149, "s": 6, "f": "Read-only SAV role on actionable report", "b": "Can VIEW data but cannot take actions."}, {"id": 150, "s": 6, "f": "Workday-RAAS", "b": "Reports-as-a-Service - the connection type to expose Workday reports as a data service."}], "sections": [{"n": 1, "title": "Building Identity Warehouse", "q": 15, "goal": "Get identity and application data into EIC correctly, and understand the object model that everything else depends on.", "objectives": [["1:1 Introduction to Saviynt", "Login and UI navigation. Local auth vs external/SSO. Forgot Password uses security questions or MFA. Applications icon (top right) > Admin > Menu icon opens the left pane. Profile menu can expose Change Password, Help Guide, Reset Security Questions."], ["1:2 Importing users from HR", "Four in-scope paths: <b>Connected system</b> (UserImportJob), <b>Batch process</b> (batch size, temp-table truncation for SAP HR), <b>CSV files</b> (Bulk User Upload, or SAV+CSV via SchemaUserJob), and <b>APIs</b> (createuserRequest / updateuserRequest over OAuth 2.0)."], ["1:3 Application onboarding", "The object model: Security System -> Endpoint -> Connection. Connected vs Disconnected vs Hybrid. Two different UIs exist: the Applications > Design enrollment wizard, and the classic Admin > Identity Repository flow. Commit Changes or it stays in draft."], ["1:4 Application data import", "Accounts, entitlement types, entitlements, and entitlement associations. Define the <b>User-Account Correlation Rule</b> before importing accounts or you generate orphans. ConnectorServerReconJob offers Full vs Incremental and Accounts / Access / Both."], ["1:5 Role import", "Four UI role types (Emergency Access, Enterprise, Application, Entitlement) but six numeric ROLETYPE values on CSV import. DB import order is Entitlements -> Roles -> Role Owners."], ["1:6 SAV Roles", "Internal permission model: Feature Access + Web Service Access + Users tabs. OOTB roles are immutable - clone them. Naming: ROLE_ prefix, uppercase only. Users must log out and back in for changes to apply."]], "traps": ["<b>Security System vs Endpoint vs Connection</b> is the single most-tested confusion. Container -> target app -> integration path.", "A <b>disconnected</b> application needs NO Connection. Data arrives by CSV; provisioning is manual.", "<b>InactivateUserOnly</b> never terminates or creates a revoke task, even when termination-from-imports is enabled. <b>In-Activate</b> can do both.", "Step-up auth works when already logged in (Profile menu), NOT during login when EIC is the auth source.", "SAV Role cloning copies Feature Access and Web Service Access, but NOT Users.", "Numbers worth memorising: user import batch 500, USERTHRESHOLD 1000, Bulk User Upload max 10 MB."]}, {"n": 2, "title": "Access Request System (ARS)", "q": 15, "goal": "Make access requestable, route it through approval, and turn approval into real provisioning.", "objectives": [["2:1 ARS in Saviynt", "Request types: single-user (self / for others), multi-user including bulk Excel upload, service account requests, and role requests (enterprise + emergency access)."], ["2:2 Setup the request process", "Create workflows (Graphical editor or XML), get them APPROVED to Active, then assign Access Add / Access Remove Workflow on the Security System. Configure Entitlement Types as Requestable."], ["2:3 Request for self and others", "Requester / Beneficiary / Application / Approvers. SAV Role 'Whom to Request' controls scope (one or two levels down). Request History tracks and modifies. Pending Approvals is the approver view."], ["2:4 Access provisioning", "Approval creates TASKS. Manual, Automated (WSRETRY scheduled) and Instant provisioning. WSRETRYJOB does the actual provisioning and auto-completes tasks."]], "traps": ["<b>No workflow on the Security System = the application does not even appear</b> on the request screen. This is the number-one ARS answer.", "Requestable is an <b>Endpoint</b> setting; workflows are a <b>Security System</b> setting. Different objects.", "Enterprise role workflows live in <b>Global Configuration > Role Request</b>, not on the Security System.", "A user needs an existing <b>Account</b> in some application before requesting an Enterprise Role.", "Approval alone provisions nothing. <b>WSRETRY</b> is what touches the target system.", "Modifying an in-flight request <b>discontinues it and creates a new one</b>.", "If the approver is also the requester, that approval level is <b>auto-approved</b>."]}, {"n": 3, "title": "Rules and Policies (Rules Engineering)", "q": 10, "goal": "Automate joiner, mover and leaver outcomes, and know which rule family fires when.", "objectives": [["3:1 Access policies", "Joiner / Mover / Leaver. Rule families under Admin > Policies: Technical, User Update, Entitlement Update, Request, Scan, Organization Update. Event-based policies use EVENTSOURCE. DAG policies use Scan Rules."], ["3:2 Technical Rules", "Birthright access. Conditions with parentheses and AND/OR (last condition must be AND in basic config). Actions specify Object Type, Object, Attribute, Birth Right. Preview shows impacted users; Send for Approval creates a Request ID."], ["3:3 User Update Rules", "Mover and leaver. Triggered by UI / Import / API events, or retroactively by DetectiveProvisioningRulesJob. Actions include Launch certification, Deprovision Access, Disable User, Transfer Ownership, Re-run provisioning rules."]], "traps": ["<b>Technical Rule = birthright. User Update Rule = change-driven.</b> If you only memorise one thing here, memorise this.", "'Remove Birthright Access if condition fails' revokes <b>only rule-granted access</b>, never ARS-granted access, and the <b>account is retained</b>.", "<b>EVENTSOURCE 1-7</b> is directly testable: 1/2/3 = created UI/Import/API, 4/5/6 = updated UI/Import/API, 7 = One Click Disable.", "Rules create tasks; <b>WSRETRY</b> completes them. Two separate jobs.", "'Is Updated' must NOT be set on rules you want DetectiveProvisioningRulesJob to process.", "Advanced query user attributes are <b>case-sensitive</b>.", "Empty 'Execute On' = act on the trigger day; a number defers the action."]}, {"n": 4, "title": "Segregation of Duties (SoD)", "q": 10, "goal": "Model toxic access combinations, block them at request time, find them after the fact, and govern the exceptions.", "objectives": [["4:1 Introduction to SoD", "Risks are evaluated at the BUSINESS FUNCTION level, mapped to coarse- and fine-grained entitlements. Business Process is a reporting grouping, not a major processing input."], ["4:2 Ruleset architecture", "Function = grouping of entitlements (AND/OR/NOT). Risk = 1 to 5 functions combined. Ruleset = a set of risks. Types: Non-SAP, SAP, Logical. Create via UI, upload file, or API."], ["4:3 Preventative SoD", "Request-time analysis. Requires ruleset toggle 'Evaluate SODs during access request', global config 'Show Existing SOD in request', and SAV role 'Show SOD in Request'."], ["4:4 Mitigating Controls", "Compensating controls for accepted exceptions. Priority Low/Medium/High/Critical. Pre-mitigated associations auto-mitigate for a window; Recommended associations only suggest."], ["4:5 Detective SoD", "RiskSODEvaluationJob finds violations in existing access. Workbench statuses: Open, In Process, Risk Accepted, Closed, Remediated."], ["4:6 SoD reporting", "Group By exports to Excel. L1 Summary / L2 Detailed / L3 Permission reports. Prepackaged SOD analytics controls in the Analytics module."]], "traps": ["<b>Function is the building block; Risk is the toxic combination.</b> Never swap these.", "<b>Remediate</b> = remove the conflicting entitlement. <b>Accept</b> = apply a Mitigating Control -> Risk Accepted. Different verbs, different outcomes.", "Risk Type <b>Critical Access</b> uses a SINGLE function. Risk Type <b>SOD</b> is the multi-function conflict.", "Max <b>5 functions</b> per risk.", "Only <b>one</b> RiskSODEvaluationJob instance may run at a time.", "Under Remediate options: No Action and Create Request -> <b>Remediated</b>; Create Task -> <b>Closed</b>.", "Expired mitigating controls <b>cannot</b> be applied.", "Preventative depth default is 2 - if it is lower than detective depth, risks surface only later in the workbench."]}, {"n": 5, "title": "Attestation (Access Reviews)", "q": 15, "goal": "Design, launch, execute and close certification campaigns, and know exactly when actions take effect.", "objectives": [["5:1 Overview", "Campaign = a group of similar certifications. Eight campaign types. Lifecycle: create -> configure -> select certifiers -> review -> lock -> expire -> export. Campaigns hold a SNAPSHOT at creation."], ["5:2 User Manager review", "Step 1 Employment Verification (Works for me / Does not work for me / Terminated), Step 2 Access Approval. Config at Global Configuration > Campaign Config User Manager."], ["5:3 Entitlement Owner review", "Ownership verification then account/child-entitlement review. Rank 26 = primary, 27 = secondary. No primary certifier = no campaign launch."], ["5:4 Role Owner review", "Role ownership then users and entitlements on the role. Inactive and composing roles are excluded. Launch by Role Keys, Role Query, or certifier list."], ["5:5 Miscellaneous", "Reporting and Excel export with audit trail, risk-based micro certifications, Smart Filters, Tiered Campaigns, campaign tracking, reconfigure and discontinue."]], "traps": ["<b>Revoke tasks are created after LOCKING</b>, and only if configured at campaign creation.", "The campaign is a <b>snapshot</b>. Data changed after creation is invisible to it.", "'Does not belong to me' updates ownership only <b>after the campaign is locked</b>.", "Reassignment <b>resets step actions to null</b>.", "Reconfiguring creates a new campaign suffixed '- Reconfigure'. <b>Certifiers cannot be changed.</b>", "One primary certifier only; a user cannot be both primary and secondary.", "Reminder emails keep coming until the certifier <b>locks</b>, even if actions were taken.", "Smart Filters are Step 2 only, and never for secondary certifiers, delegates or consultees."]}, {"n": 6, "title": "Analytics", "q": 5, "goal": "Only 5 questions, but the domain is small and precise - which makes it very testable. Do not skip it.", "objectives": [["6:1 Components", "Consumption and delivery (Email attachment / Save Data / Save To File). Authoring via SQL, Custom, ES Query, Data Query, Runtime. Reports vs Controls. Actionable reports."], ["6:2 Control types", "Elastic (Version 2, Elasticsearch) vs Non-Elastic (Version 1, SQL). Control contexts: User Context and Organization Context."], ["6:3 Report creation methods", "SQL queries (V1 and V2 flavours), Runtime Analytic Controls, Custom Analytic Controls, and Elasticsearch queries."], ["6:4 Dashboards", "ES-based (recommended, faster) vs non-ES (real-time but slower). Assigned per module through the SAV Role. Types include Tile, Bar, Pie, Donut, Gauge, Stack Bar, Line and their ES variants."]], "traps": ["<b>Report vs Control</b> is the first distinction to make on almost any Analytics question.", "<b>Elastic vs Non-Elastic</b> is the named pair in the blueprint - not preventive/detective.", "Actionable reports work <b>only</b> for SQL query and Custom controls.", "Preview validates syntax and 10 rows but <b>not</b> the mandatory columns for an Allowed Action. Create does.", "Dry Run does not store results; Run Now does.", "<b>Base Count applies only with Save Data.</b>", "Actionable analytics creates a <b>Task</b> in ARS, not a request, and never removes anything instantly.", "Browser reload only refreshes a dashboard if the SAV role has access to ALL endpoints."]}], "bridge": [{"sav": "Identity Warehouse / Identity Repository", "sp": "Identity Cube / identity data store", "note": "The governed store of identities, accounts and access."}, {"sav": "User", "sp": "Identity", "note": "Saviynt says User where SailPoint says Identity."}, {"sav": "Account", "sp": "Account / linked account", "note": "Same concept. Correlation vs identity correlation."}, {"sav": "Entitlement", "sp": "Entitlement / group / permission", "note": "Same concept."}, {"sav": "Role (Enterprise / Application)", "sp": "Business Role / IT Role / Access Profile", "note": "Enterprise Role ~ cross-app business role. Application Role ~ access profile on one source."}, {"sav": "Security System", "sp": "Application family / logical container", "note": "No clean SailPoint 1:1. Think of a parent container grouping app instances sharing a connection."}, {"sav": "Endpoint", "sp": "Source / Application instance", "note": "'AD Prod', 'Salesforce Prod'. This is your Source."}, {"sav": "Connection", "sp": "Connector configuration / credentials", "note": "How the platform talks to the target."}, {"sav": "Connected / Disconnected onboarding", "sp": "Connected source / file-based (flat file) source", "note": "Disconnected = CSV in, manual provisioning out."}, {"sav": "User-Account Correlation Rule", "sp": "Account correlation / correlation config", "note": "Run it BEFORE import or you get orphans."}, {"sav": "Reconciliation / Import", "sp": "Aggregation", "note": "Saviynt 'reconcile', SailPoint 'aggregate'."}, {"sav": "Job Control Panel", "sp": "Task Scheduler + Task Results", "note": "Where you create, run and monitor jobs."}, {"sav": "SAV Role", "sp": "Capability / admin role", "note": "Platform permission, NOT requestable business access. Biggest translation trap."}, {"sav": "ARS (Access Request System)", "sp": "Access Request / Request Center", "note": "Same job, different name."}, {"sav": "Workflow (Access Add / Remove)", "sp": "Access request approval workflow", "note": "In Saviynt it is bound to the Security System."}, {"sav": "Provisioning Task", "sp": "Provisioning transaction / plan execution", "note": "EIC tracks fulfilment as discrete Tasks."}, {"sav": "WSRETRYJOB", "sp": "Provisioning engine run", "note": "The thing that actually touches the target system."}, {"sav": "Technical Rule", "sp": "Birthright / auto-assignment logic", "note": "Joiner automation."}, {"sav": "User Update Rule", "sp": "Identity trigger / lifecycle event rule", "note": "Mover and leaver automation."}, {"sav": "Request Rule", "sp": "Request-time policy / routing rule", "note": "Evaluated during the request."}, {"sav": "Scan Rule", "sp": "Scheduled detective control / data classification", "note": "Drives DAG in Saviynt."}, {"sav": "SoD Function", "sp": "SoD access grouping", "note": "The building block."}, {"sav": "SoD Risk", "sp": "SOD policy / rule", "note": "The toxic combination."}, {"sav": "SoD Violation", "sp": "Policy violation", "note": "Same idea."}, {"sav": "Preventative SoD", "sp": "Policy blocks approval/provisioning", "note": "Request time."}, {"sav": "Detective SoD", "sp": "Policy allows, creates violation for remediation", "note": "After the fact."}, {"sav": "Mitigating Control", "sp": "Policy exception / compensating control", "note": "Accepting rather than removing."}, {"sav": "SOD Violations Workbench", "sp": "Violation / remediation queue", "note": "Where you accept, remediate, close."}, {"sav": "Attestation", "sp": "Access Certification", "note": "Same discipline, different word."}, {"sav": "Campaign", "sp": "Certification Campaign", "note": "Container for many certifications."}, {"sav": "Certifier / Reviewer", "sp": "Certifier", "note": "Manager, entitlement owner, role owner."}, {"sav": "Certify / Revoke", "sp": "Approve / Remove", "note": "Same decisions."}, {"sav": "Risk-based micro certification", "sp": "Targeted / event-driven certification", "note": "Small, risk-scoped review."}, {"sav": "Analytics", "sp": "Reporting + identity analytics", "note": "Same space."}, {"sav": "Analytic Control", "sp": "Detective control / continuous monitoring report", "note": "A control is a governed, runnable report."}, {"sav": "Elastic Control", "sp": "Elasticsearch-backed control", "note": "Version 2 in the UI."}, {"sav": "Non-Elastic Control", "sp": "SQL / direct DB control", "note": "Version 1 in the UI."}, {"sav": "Dashboard", "sp": "Dashboard", "note": "Assigned per module via SAV Role in Saviynt."}, {"sav": "'Policy'", "sp": "'Policy'", "note": "FALSE FRIEND. SailPoint policy = governance check. Saviynt Policies menu = rule-driven automation; SoD is its own module."}, {"sav": "Enrollment", "sp": "Onboarding", "note": "Saviynt uses both interchangeably."}], "glossary": [{"t": "EIC", "d": "Saviynt Enterprise Identity Cloud - the platform name you see throughout the UI and Admin Guide."}, {"t": "Identity Repository", "d": "Where EIC stores identity and access data. Your 'identity warehouse'."}, {"t": "Orphan account", "d": "An account with no correlating user."}, {"t": "Baselining", "d": "Identifying rogue / out-of-band access managed outside Saviynt. Re-Baseline handles increments."}, {"t": "SCF", "d": "Saviynt Connector Framework - for building custom connectors."}, {"t": "iBot / Identity BOT", "d": "Integrates EIC with applications that expose no integration APIs."}, {"t": "Connect 2.0", "d": "Custom SSL-based connectivity to on-premise AND on-cloud targets."}, {"t": "Application Features", "d": "Toggles controlling capabilities (request management, provisioning, PAM, group management) that set values on the Security System, Endpoint and Connection behind the scenes."}, {"t": "Entitlement Type", "d": "The category of entitlement on an endpoint (e.g. AD Group). Carries the Requestable option and the Privileges tab."}, {"t": "Enterprise Role", "d": "Cross-application access bundle."}, {"t": "Application Role", "d": "Access bundle limited to one application."}, {"t": "Emergency Access Role", "d": "Firefighter. Time-bound, removed after the end date."}, {"t": "Entitlement Role", "d": "Represents a group (e.g. an AD group) as a role. Saviynt advises against choosing this type when creating a role manually."}, {"t": "Execution Trail", "d": "Rule audit and troubleshooting page. Needs logexecutiontrail and enableexecutiontrail set."}, {"t": "Business Process (SoD)", "d": "Grouping of functions and roles. Used for SOD reporting and visibility, not core processing."}, {"t": "Mitigating Control Association", "d": "Mapping of a violation (user + risk) to a mitigating control."}, {"t": "Consult", "d": "Certification action letting a certifier ask another user to weigh in."}, {"t": "Lock (certification)", "d": "Finalises a certification. Actions can no longer be modified and revoke tasks are created."}, {"t": "Allowed Action", "d": "Pre-selected action available on records in an actionable analytics report."}, {"t": "Control vs Report", "d": "The Control is the configuration you manage; the Report is the output you view after running it."}], "sources": [{"t": "Saviynt Certified IGA Professional (SCIP) Exam Preparation Guide", "u": "https://saviynt.com/hubfs/Saviynt%20Certified%20IGA%20Professional%20(SCIP)%20Exam%20Preparation%20Guide%20(1).pdf?hsLang=en", "k": "Official", "d": "Primary scope authority. Content outline, question types, duration, scoring, sample questions, recertification, fee. Verified live against the published PDF."}, {"t": "Saviynt Certification Program FAQs", "u": "", "k": "Official (project file)", "d": "Registration, retake, reschedule, validity. Contains the legacy 70% passing line - see the scoring note."}, {"t": "Saviynt Certification Program FAQs - Examity Version", "u": "", "k": "Official (project file)", "d": "Proctoring logistics."}, {"t": "Saviynt Training FAQs", "u": "", "k": "Official (project file)", "d": "Training prerequisites."}, {"t": "Announcing the Saviynt Certification Program", "u": "", "k": "Official (project file)", "d": "Program background."}, {"t": "Saviynt Certified IGA Professional Study Guide v3", "u": "", "k": "Your project doc", "d": "Merged v2 + v1 guide. Deep per-objective content, UI paths, job names, exam traps."}, {"t": "Saviynt SCIP Study Guide v0.1", "u": "", "k": "Your project doc", "d": "Original deep-dive: config keys, EVENTSOURCE values, ROLETYPE mappings, version-specific behaviours."}, {"t": "Saviynt Enterprise Identity Cloud Administration Guide", "u": "https://docs.saviyntcloud.com/", "k": "Official docs", "d": "Underlying source for object model, jobs, configuration keys and release-specific behaviour cited throughout v0.1/v3."}, {"t": "Saviynt IGA Level 100 Training Datasheet", "u": "https://saviynt.com/hubfs/Datasheet%20-%20Saviynt%20IGA%20Level%20100%20Training.pdf?hsLang=en", "k": "Official", "d": "Mandatory prerequisite training scope."}, {"t": "Saviynt University", "u": "https://saviynt.com/university", "k": "Official", "d": "Certification tracks; SCIP and SCEP are separate."}], "meta": {"exam": "SAVIGA-C01", "total": 70, "minutes": 120, "scaleMin": 50, "scaleMax": 500, "pass": 350}};
+const Q = DATA.questions, C = DATA.cards, SEC = DATA.sections, M = DATA.meta;
+const SECNAME = {}; SEC.forEach(s=>SECNAME[s.n]=s.title);
+const TYPENAME = {mc:"Multiple choice", mr:"Multiple response", tf:"True / False", sc:"Scenario"};
+const $ = s=>document.querySelector(s), $$ = s=>[...document.querySelectorAll(s)];
+const esc = s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- storage (degrades gracefully if blocked) ---------- */
+const KEY = "scip-hub-v1";
+let mem = null;
+function load(){
+  if(mem) return mem;
+  let d = null;
+  try{ const r = localStorage.getItem(KEY); if(r) d = JSON.parse(r); }catch(e){}
+  mem = Object.assign({answers:{}, cards:{}, exams:[]}, d||{});
+  return mem;
+}
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(mem)); }catch(e){} }
+const ST = load();
+
+/* ---------- helpers ---------- */
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+function sameSet(a,b){ if(a.length!==b.length) return false; const s=new Set(b); return a.every(x=>s.has(x)); }
+function secStats(){
+  const out = {};
+  SEC.forEach(s=>out[s.n]={n:0,ok:0});
+  Object.entries(ST.answers).forEach(([id,v])=>{
+    const q = Q.find(x=>x.id==id); if(!q) return;
+    out[q.s].n++; if(v.ok) out[q.s].ok++;
+  });
+  return out;
+}
+function scaled(raw){ return Math.round(M.scaleMin + (raw/M.total)*(M.scaleMax-M.scaleMin)); }
+
+/* ---------- routing ---------- */
+const PAGES = [["home","Dashboard"],["blueprint","Blueprint"],["study","Study"],["cards","Flashcards"],
+               ["practice","Practice"],["exam","Mock exam"],["bridge","SailPoint bridge"],
+               ["glossary","Glossary"],["sources","Sources"]];
+const tabs = $("#tabs");
+PAGES.forEach(([id,label])=>{
+  const b = document.createElement("button");
+  b.textContent = label; b.dataset.page = id;
+  b.onclick = ()=>go(id);
+  tabs.appendChild(b);
+});
+function go(id){
+  $$(".page").forEach(p=>p.classList.toggle("on", p.id === "p"+"-"+id));
+  $$("#tabs button").forEach(b=>b.setAttribute("aria-current", b.dataset.page===id ? "page" : "false"));
+  window.scrollTo({top:0,behavior:"instant"});
+  if(id==="home") renderHome();
+  if(id==="exam") renderExamHistory();
+}
+$$("[data-go]").forEach(b=>b.onclick=()=>go(b.dataset.go));
+
+/* ---------- theme ---------- */
+(function(){
+  let t = "dark"; try{ t = localStorage.getItem(KEY+"-theme") || "dark"; }catch(e){}
+  document.documentElement.dataset.theme = t;
+  $("#themeBtn").onclick = ()=>{
+    const n = document.documentElement.dataset.theme==="dark" ? "light":"dark";
+    document.documentElement.dataset.theme = n;
+    try{ localStorage.setItem(KEY+"-theme", n); }catch(e){}
+  };
+})();
+
+/* ---------- dashboard ---------- */
+function renderHome(){
+  const ans = Object.keys(ST.answers).length;
+  const ok = Object.values(ST.answers).filter(a=>a.ok).length;
+  $("#s-ans").textContent = ans;
+  $("#s-ansb").textContent = "of "+Q.length+" in the bank";
+  $("#s-acc").textContent = ans ? Math.round(ok/ans*100)+"%" : "—";
+  const known = Object.values(ST.cards).filter(v=>v==="known").length;
+  $("#s-known").textContent = known;
+  const best = ST.exams.length ? Math.max(...ST.exams.map(e=>e.scaled)) : null;
+  $("#s-best").textContent = best!==null ? best : "—";
+  $("#s-bestb").textContent = best!==null ? (best>=M.pass ? "passing — 350 needed" : "below the 350 pass mark") : "350 needed to pass";
+
+  const st = secStats();
+  $("#home-domains").innerHTML = SEC.map(s=>{
+    const d = st[s.n], pct = d.n ? Math.round(d.ok/d.n*100) : 0;
+    const label = d.n ? pct+"%" : "not started";
+    return `<div class="card tile" data-sec="${s.n}">
+      <div class="row" style="justify-content:space-between;align-items:flex-start">
+        <div><span class="tag s${s.n}">Domain ${s.n}</span>
+        <h3 style="margin:8px 0 2px">${esc(s.title)}</h3>
+        <div class="dim">${s.q} exam questions &middot; ${Math.round(s.q/70*100)}% of the exam</div></div>
+        <div style="text-align:right"><div class="stat" style="font-size:22px">${label}</div><div class="dim">${d.n} answered</div></div>
+      </div>
+      <div class="bar" style="margin-top:12px"><i style="width:${pct}%"></i></div>
+    </div>`;
+  }).join("");
+  $$("#home-domains .tile").forEach(t=>t.onclick=()=>{ $("#pr-sec").value = t.dataset.sec; go("practice"); prBuild(); });
+}
+$$("[data-reset]").forEach(b=>b.onclick=()=>{
+  if(!confirm("Clear all answers, flashcard marks and exam history?")) return;
+  mem = {answers:{},cards:{},exams:[]}; save(); renderHome(); fcBuild(); prBuild(); renderExamHistory();
+});
+
+/* ---------- blueprint ---------- */
+$("#bp-rows").innerHTML = SEC.map(s=>
+  `<tr><td><span class="tag s${s.n}">0${s.n}</span></td><td>${esc(s.title)}</td>
+   <td style="text-align:right"><strong>${s.q}</strong></td>
+   <td style="text-align:right">${Math.round(s.q/70*100)}%</td></tr>`).join("");
+
+/* ---------- study ---------- */
+$("#study-tiles").innerHTML = SEC.map(s=>
+  `<div class="card tile" data-s="${s.n}">
+     <span class="tag s${s.n}">Domain ${s.n}</span>
+     <h3 style="margin:8px 0 4px">${esc(s.title)}</h3>
+     <div class="dim">${s.q} questions &middot; ${s.objectives.length} objectives &middot; ${s.traps.length} traps</div>
+   </div>`).join("");
+$$("#study-tiles .tile").forEach(t=>t.onclick=()=>studyOpen(+t.dataset.s));
+function studyOpen(n){
+  const s = SEC.find(x=>x.n===n);
+  $("#study-detail").innerHTML = `
+    <div class="card" style="margin-bottom:16px">
+      <span class="tag s${s.n}">Domain ${s.n} &middot; ${s.q} of 70 questions</span>
+      <h2 style="margin:10px 0 6px">${esc(s.title)}</h2>
+      <p class="muted" style="margin-bottom:0">${esc(s.goal)}</p>
+    </div>
+    <h3>Objectives</h3>
+    ${s.objectives.map(o=>`<details><summary>${esc(o[0])}</summary><p class="muted" style="margin:10px 0 0">${o[1]}</p></details>`).join("")}
+    <h3 style="margin-top:22px">Exam traps for this domain</h3>
+    <div class="card"><ul class="clean muted" style="font-size:14px;margin:0">${s.traps.map(t=>`<li>${t}</li>`).join("")}</ul></div>
+    <div class="row" style="margin-top:16px">
+      <button class="btn" onclick="document.querySelector('#pr-sec').value='${s.n}';go('practice');prBuild()">Drill this domain</button>
+      <button class="btn sec" onclick="document.querySelector('#fc-sec').value='${s.n}';go('cards');fcBuild()">Flashcards for this domain</button>
+    </div>`;
+  $("#study-detail").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+/* ---------- flashcards ---------- */
+const fcSel = $("#fc-sec");
+fcSel.innerHTML = `<option value="all">All domains</option>` + SEC.map(s=>`<option value="${s.n}">Domain ${s.n} &mdash; ${esc(s.title)}</option>`).join("");
+let fcList = [], fcI = 0;
+function fcBuild(){
+  const s = fcSel.value, onlyUnknown = $("#fc-unknown").checked;
+  fcList = C.filter(c=>(s==="all"||c.s==+s) && (!onlyUnknown || ST.cards[c.id]!=="known"));
+  fcI = 0; fcShow();
+}
+function fcShow(){
+  const el = $("#fc"); el.classList.remove("flip");
+  if(!fcList.length){ $("#fc-front").textContent="Nothing left here."; $("#fc-back").textContent="Try another domain, or untick the filter."; $("#fc-tag").textContent=""; $("#fc-count").textContent=""; return; }
+  const c = fcList[fcI];
+  $("#fc-tag").textContent = "Domain "+c.s+" · "+SECNAME[c.s];
+  $("#fc-tag").className = "tag s"+c.s;
+  $("#fc-front").innerHTML = esc(c.f);
+  $("#fc-back").innerHTML = esc(c.b);
+  const mark = ST.cards[c.id];
+  $("#fc-count").textContent = (fcI+1)+" of "+fcList.length + (mark ? " · marked "+mark : "");
+}
+$("#fc").onclick = ()=>$("#fc").classList.toggle("flip");
+$("#fc").onkeydown = e=>{ if(e.key===" "){e.preventDefault();$("#fc").classList.toggle("flip");} };
+$("#fc-next").onclick = ()=>{ if(fcList.length){ fcI=(fcI+1)%fcList.length; fcShow(); } };
+$("#fc-prev").onclick = ()=>{ if(fcList.length){ fcI=(fcI-1+fcList.length)%fcList.length; fcShow(); } };
+function fcMark(m){ if(!fcList.length) return; ST.cards[fcList[fcI].id]=m; save(); $("#fc-next").click(); }
+$("#fc-known").onclick = ()=>fcMark("known");
+$("#fc-review").onclick = ()=>fcMark("review");
+$("#fc-shuffle").onclick = ()=>{ fcList = shuffle(fcList); fcI=0; fcShow(); };
+fcSel.onchange = fcBuild; $("#fc-unknown").onchange = fcBuild;
+document.addEventListener("keydown", e=>{
+  if(!$("#p-cards").classList.contains("on")) return;
+  if(e.target.tagName==="INPUT"||e.target.tagName==="SELECT") return;
+  if(e.key==="ArrowRight") $("#fc-next").click();
+  if(e.key==="ArrowLeft") $("#fc-prev").click();
+  if(e.key.toLowerCase()==="k") $("#fc-known").click();
+  if(e.key.toLowerCase()==="r") $("#fc-review").click();
+});
+
+/* ---------- shared question renderer ---------- */
+function qHTML(q, state){
+  // state: {picked:[], revealed:bool}
+  const letters = "ABCDEFGH";
+  const multi = q.a.length>1;
+  const opts = q.o.map((o,i)=>{
+    let cls = "opt";
+    if(state.revealed){
+      if(q.a.includes(i)) cls += " ok";
+      else if(state.picked.includes(i)) cls += " no";
+    } else if(state.picked.includes(i)) cls += " sel";
+    return `<button class="${cls}" data-i="${i}" ${state.revealed?"disabled":""}>
+      <span class="mk">${letters[i]}</span><span>${esc(o)}</span></button>`;
+  }).join("");
+  const flag = q.flag ? `<div class="note bad" style="margin:0 0 12px"><strong>Flagged answer.</strong>
+     The source material is ambiguous or self-contradictory on this item &mdash; the explanation says why.
+     Do not let it shake your confidence on exam day; know the documented behaviour.</div>` : "";
+  return `<div class="qmeta">
+      <span class="tag s${q.s}">Domain ${q.s}</span>
+      <span class="tag">${TYPENAME[q.t]}</span>
+      ${multi?'<span class="tag">Select all that apply</span>':''}
+      ${q.flag?'<span class="tag" style="color:var(--amber);border-color:var(--amber)">flagged</span>':''}
+    </div>
+    ${flag}
+    <h3 style="font-size:17px;line-height:1.45;margin-bottom:16px">${esc(q.q)}</h3>
+    <div class="opts">${opts}</div>
+    ${state.revealed ? `<div class="expl"><strong>${sameSet(state.picked,q.a)?"Correct.":"Not quite."}</strong> ${esc(q.e)}
+      <div class="dim" style="margin-top:8px">Source: ${esc(q.src)}</div></div>` : ""}`;
+}
+
+/* ---------- practice ---------- */
+const prSel = $("#pr-sec");
+prSel.innerHTML = `<option value="all">All domains</option>` + SEC.map(s=>`<option value="${s.n}">Domain ${s.n} &mdash; ${esc(s.title)}</option>`).join("");
+let prList = [], prI = 0, prState = {picked:[],revealed:false};
+function prBuild(){
+  const s = prSel.value, t = $("#pr-type").value, f = $("#pr-filter").value;
+  prList = Q.filter(q=>(s==="all"||q.s==+s) && (t==="all"||q.t===t) && (
+    f==="all" ? true : f==="unseen" ? !ST.answers[q.id] : (ST.answers[q.id] && !ST.answers[q.id].ok)));
+  prList = shuffle(prList); prI = 0; prShow();
+}
+function prShow(){
+  if(!prList.length){ $("#pr-card").innerHTML = `<p class="muted" style="margin:0">No questions match that filter. Try widening it.</p>`; $("#pr-count").textContent=""; return; }
+  const q = prList[prI];
+  prState = {picked:[],revealed:false};
+  $("#pr-count").textContent = (prI+1)+" of "+prList.length;
+  prRender();
+}
+function prRender(){
+  const q = prList[prI];
+  $("#pr-card").innerHTML = qHTML(q, prState) +
+    (!prState.revealed ? `<div class="row" style="margin-top:14px"><button class="btn" id="pr-check" ${prState.picked.length?"":"disabled"}>Check answer</button></div>` : "");
+  $$("#pr-card .opt").forEach(b=>b.onclick=()=>{
+    const i = +b.dataset.i;
+    if(q.a.length>1){ prState.picked = prState.picked.includes(i) ? prState.picked.filter(x=>x!==i) : prState.picked.concat(i); }
+    else { prState.picked = [i]; }
+    prRender();
+  });
+  const chk = $("#pr-check");
+  if(chk) chk.onclick = ()=>{
+    prState.revealed = true;
+    const ok = sameSet(prState.picked, q.a);
+    ST.answers[q.id] = {ok, at:Date.now()}; save();
+    prRender();
+  };
+}
+$("#pr-next").onclick = ()=>{ if(prList.length){ prI=(prI+1)%prList.length; prShow(); } };
+$("#pr-prev").onclick = ()=>{ if(prList.length){ prI=(prI-1+prList.length)%prList.length; prShow(); } };
+$("#pr-shuffle").onclick = prBuild;
+prSel.onchange = prBuild; $("#pr-type").onchange = prBuild; $("#pr-filter").onchange = prBuild;
+
+/* ---------- mock exam ---------- */
+let EX = null, exTimer = null;
+function buildExam(){
+  let list = [];
+  SEC.forEach(s=>{ list = list.concat(shuffle(Q.filter(q=>q.s===s.n)).slice(0, s.q)); });
+  return shuffle(list).map(q=>({q, picked:[], flag:false}));
+}
+$("#ex-start").onclick = ()=>{
+  EX = {items:buildExam(), i:0, started:Date.now(), untimed:$("#ex-untimed").checked, left:M.minutes*60};
+  $("#exam-setup").style.display="none"; $("#exam-result").style.display="none"; $("#exam-run").style.display="";
+  exRender(); exTick();
+  exTimer = setInterval(exTick, 1000);
+};
+function exTick(){
+  if(!EX) return;
+  if(EX.untimed){ $("#ex-timer").textContent = "untimed"; return; }
+  EX.left = Math.max(0, M.minutes*60 - Math.floor((Date.now()-EX.started)/1000));
+  const m = Math.floor(EX.left/60), s = EX.left%60;
+  const t = $("#ex-timer");
+  t.textContent = m+":"+String(s).padStart(2,"0");
+  t.classList.toggle("low", EX.left<600);
+  if(EX.left<=0){ exSubmit(true); }
+}
+function exRender(){
+  const it = EX.items[EX.i];
+  const answered = EX.items.filter(x=>x.picked.length).length;
+  $("#ex-pos").textContent = "Question "+(EX.i+1)+" of "+EX.items.length;
+  $("#ex-answered").textContent = answered+" answered · "+(EX.items.length-answered)+" left";
+  $("#ex-bar").style.width = (answered/EX.items.length*100)+"%";
+  $("#ex-flag").textContent = it.flag ? "Unflag" : "Flag";
+  $("#ex-card").innerHTML = qHTML(it.q, {picked:it.picked, revealed:false});
+  $$("#ex-card .opt").forEach(b=>b.onclick=()=>{
+    const i = +b.dataset.i;
+    if(it.q.a.length>1){ it.picked = it.picked.includes(i) ? it.picked.filter(x=>x!==i) : it.picked.concat(i); }
+    else { it.picked = [i]; }
+    exRender();
+  });
+  $("#ex-pal").innerHTML = EX.items.map((x,i)=>
+    `<button class="${x.picked.length?"ans":""} ${x.flag?"flag":""} ${i===EX.i?"cur":""}" data-i="${i}" title="Question ${i+1}">${i+1}</button>`).join("");
+  $$("#ex-pal button").forEach(b=>b.onclick=()=>{ EX.i=+b.dataset.i; exRender(); });
+  $("#ex-next").textContent = EX.i===EX.items.length-1 ? "Back to start ↻" : "Next →";
+}
+$("#ex-next").onclick = ()=>{ EX.i=(EX.i+1)%EX.items.length; exRender(); };
+$("#ex-prev").onclick = ()=>{ EX.i=(EX.i-1+EX.items.length)%EX.items.length; exRender(); };
+$("#ex-flag").onclick = ()=>{ EX.items[EX.i].flag = !EX.items[EX.i].flag; exRender(); };
+$("#ex-submit").onclick = ()=>exSubmit(false);
+
+function exSubmit(auto){
+  const un = EX.items.filter(x=>!x.picked.length).length;
+  if(!auto && un && !confirm(un+" question"+(un>1?"s are":" is")+" unanswered. Unanswered counts as incorrect on the real exam. Submit anyway?")) return;
+  clearInterval(exTimer); exTimer=null;
+  let raw = 0; const per = {};
+  SEC.forEach(s=>per[s.n]={n:0,ok:0});
+  EX.items.forEach(it=>{
+    const ok = sameSet(it.picked, it.q.a);
+    if(ok) raw++;
+    per[it.q.s].n++; if(ok) per[it.q.s].ok++;
+    ST.answers[it.q.id] = {ok, at:Date.now()};
+  });
+  const sc = scaled(raw), pct = Math.round(raw/EX.items.length*100), pass = sc>=M.pass;
+  ST.exams.push({at:Date.now(), raw, scaled:sc, pct, pass, mins:Math.round((Date.now()-EX.started)/60000)});
+  save();
+
+  const wrong = EX.items.filter(it=>!sameSet(it.picked,it.q.a));
+  $("#exam-run").style.display="none"; $("#exam-result").style.display="";
+  $("#exam-result").innerHTML = `
+    <div class="kicker">${auto?"Time expired — auto-submitted":"Result"}</div>
+    <h1>${pass?"Pass":"Not yet"}</h1>
+    <div class="card" style="margin:16px 0">
+      <div class="row" style="gap:26px;align-items:center">
+        <div class="score-ring" style="--p:${Math.min(100,(sc-M.scaleMin)/(M.scaleMax-M.scaleMin)*100)};--ringc:${pass?"var(--ok)":"var(--rose)"}">
+          <div><div class="stat" style="font-size:34px">${sc}</div><div class="dim">of 500</div></div>
+        </div>
+        <div style="flex:1;min-width:200px">
+          <p style="font-size:16px;margin-bottom:8px"><strong>${raw} of ${EX.items.length} correct</strong> &mdash; ${pct}% raw.
+          Pass mark is ${M.pass}.</p>
+          <p class="dim" style="margin-bottom:8px">Completed in ${ST.exams[ST.exams.length-1].mins} minutes.</p>
+          <p class="dim" style="margin:0">Saviynt does not publish its scaling formula. This uses a linear
+          50&ndash;500 mapping, so 350 lands at roughly 67% raw &mdash; close to the legacy 70% FAQ figure.
+          Treat it as a guide, not a guarantee.</p>
+        </div>
+      </div>
+    </div>
+    <h2>By domain</h2>
+    <div class="grid g3" style="margin-bottom:22px">
+      ${SEC.map(s=>{const d=per[s.n],p=d.n?Math.round(d.ok/d.n*100):0;
+        return `<div class="card"><span class="tag s${s.n}">Domain ${s.n}</span>
+          <h3 style="margin:8px 0 2px;font-size:15px">${esc(s.title)}</h3>
+          <div class="row" style="justify-content:space-between;align-items:baseline">
+            <div class="stat" style="font-size:22px">${d.ok}/${d.n}</div><div class="dim">${p}%</div></div>
+          <div class="bar" style="margin-top:8px"><i style="width:${p}%"></i></div></div>`}).join("")}
+    </div>
+    <div class="row" style="margin-bottom:22px">
+      <button class="btn" onclick="location.hash='';$('#exam-result').style.display='none';$('#exam-setup').style.display='';renderExamHistory()">Back</button>
+      <button class="btn sec" id="ex-again">Take another</button>
+    </div>
+    <h2>Review the ${wrong.length} you missed</h2>
+    ${wrong.length ? wrong.map(it=>`<details><summary>Domain ${it.q.s} &mdash; ${esc(it.q.q.slice(0,110))}${it.q.q.length>110?"…":""}</summary>
+      <div style="margin-top:12px">${qHTML(it.q,{picked:it.picked,revealed:true})}</div></details>`).join("")
+      : `<div class="note good" style="margin:0"><strong>Nothing missed.</strong> Clean sweep.</div>`}`;
+  $$("#exam-result .opt").forEach(b=>b.disabled=true);
+  const again = $("#ex-again"); if(again) again.onclick = ()=>{ $("#exam-result").style.display="none"; $("#exam-setup").style.display=""; renderExamHistory(); };
+  window.scrollTo({top:0});
+  EX = null;
+}
+function renderExamHistory(){
+  const h = $("#ex-history"); if(!h) return;
+  if(!ST.exams.length){ h.innerHTML = `<p class="dim">No mock exams taken yet.</p>`; return; }
+  h.innerHTML = `<h2>Your attempts</h2><div class="card scroll"><table>
+    <thead><tr><th>When</th><th>Raw</th><th>Scaled</th><th>Result</th><th>Time</th></tr></thead>
+    <tbody>${ST.exams.slice().reverse().map(e=>`<tr>
+      <td>${new Date(e.at).toLocaleString()}</td>
+      <td>${e.raw}/70 &middot; ${e.pct}%</td>
+      <td><strong>${e.scaled}</strong></td>
+      <td style="color:${e.pass?"var(--ok)":"var(--bad)"}">${e.pass?"Pass":"Fail"}</td>
+      <td>${e.mins} min</td></tr>`).join("")}</tbody></table></div>`;
+}
+
+/* ---------- bridge / glossary / sources ---------- */
+function brRender(f=""){
+  const q = f.toLowerCase();
+  $("#br-rows").innerHTML = DATA.bridge.filter(b=>!q || (b.sav+b.sp+b.note).toLowerCase().includes(q))
+    .map(b=>`<tr><td><strong>${esc(b.sav)}</strong></td><td>${esc(b.sp)}</td><td class="muted">${esc(b.note)}</td></tr>`).join("")
+    || `<tr><td colspan="3" class="dim">No match.</td></tr>`;
+}
+$("#br-search").oninput = e=>brRender(e.target.value); brRender();
+function glRender(f=""){
+  const q = f.toLowerCase();
+  $("#gl-rows").innerHTML = DATA.glossary.filter(g=>!q || (g.t+g.d).toLowerCase().includes(q))
+    .map(g=>`<tr><th style="width:210px;text-transform:none;font-size:14px;color:var(--text)">${esc(g.t)}</th><td class="muted">${esc(g.d)}</td></tr>`).join("")
+    || `<tr><td class="dim">No match.</td></tr>`;
+}
+$("#gl-search").oninput = e=>glRender(e.target.value); glRender();
+$("#src-rows").innerHTML = DATA.sources.map(s=>`<div class="card">
+  <span class="tag">${esc(s.k)}</span>
+  <h3 style="margin:9px 0 6px;font-size:15px">${s.u?`<a href="${esc(s.u)}" target="_blank" rel="noopener">${esc(s.t)}</a>`:esc(s.t)}</h3>
+  <p class="muted" style="font-size:14px;margin:0">${esc(s.d)}</p></div>`).join("");
+
+/* ---------- init ---------- */
+fcBuild(); prBuild(); renderHome(); renderExamHistory(); go("home");
+</script>
+</body>
+</html>
